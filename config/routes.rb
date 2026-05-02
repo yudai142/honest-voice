@@ -7,6 +7,11 @@ Rails.application.routes.draw do
   # Root path - redirects based on role
   root 'root#index'
 
+  # Questions and Answers
+  resources :questions, only: [:show] do
+    resources :answers, only: [:create, :index]
+  end
+
   # Admin namespace
   namespace :admin, path: 'admin' do
     get 'dashboard', to: 'dashboard#index', as: :dashboard

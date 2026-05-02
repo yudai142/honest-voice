@@ -4,6 +4,7 @@ class Answer < ApplicationRecord
   belongs_to :choice, optional: true
 
   validates :body, presence: true
+  validates :session_id, presence: true
 
   before_save :set_session_id_hash
 
