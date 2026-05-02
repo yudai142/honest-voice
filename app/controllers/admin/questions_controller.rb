@@ -48,6 +48,8 @@ class Admin::QuestionsController < ApplicationController
   # POST /admin/questions
   def create
     @question = Question.new(question_params)
+    @question.user = current_user
+    @question.status ||= 'draft'
 
     if @question.save
       render json: { question: @question }, status: :created
@@ -97,7 +99,7 @@ class Admin::QuestionsController < ApplicationController
       title: question.title,
       body: question.body,
       question_type: question.question_type,
-      choices: question.choices.map { |c| { id: c.id, text: c.text } },
+      choices: question.choices.map { |c| { id: c.id, text: c.label } },
       stats: calculate_stats(question),
       choice_stats: calculate_choice_stats(question),
       created_at: question.created_at,
