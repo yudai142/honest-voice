@@ -1,6 +1,6 @@
 class Question < ApplicationRecord
-  enum question_type: { text: 'text', choice: 'choice', rating: 'rating' }
-  enum status: { draft: 'draft', published: 'published', closed: 'closed' }
+  enum :question_type, { text: 'text', choice: 'choice', rating: 'rating' }
+  enum :status, { draft: 'draft', published: 'published', closed: 'closed' }
 
   belongs_to :user, optional: false
   has_many :choices, dependent: :destroy
