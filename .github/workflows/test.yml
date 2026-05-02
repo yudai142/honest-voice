@@ -53,42 +53,31 @@ jobs:
         ports:
           - 5432:5432
 
-    strategy:
-      matrix:
-        ruby-version: [3.2.11]
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby-version }}
-          bundler-cache: false
-
-      - name: Add platform to Gemfile.lock and install dependencies
-        run: |
-          bundle lock --add-platform x86_64-linux || true
-          bundle install --jobs 4
-
-      - name: Clear npm cache and reinstall Node dependencies
-        run: |
-          npm cache clean --force
-          npm install
-
-      - name: Set up Node.js for Rails assets
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18.x
           cache: npm
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Install Node dependencies
+        run: npm ci
 
       - name: Setup database
         env:
           RAILS_ENV: test
           DATABASE_URL: postgresql://postgres@localhost/honest_voice_test
         run: |
-          bundle exec rails db:create
+          bundle exec rails db:create 2>&1 || echo "Database already exists"
           bundle exec rails db:migrate
 
       - name: Run Rails tests
