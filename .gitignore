@@ -36,8 +36,10 @@ pickle-email-*.html
 # Ignore master key for decrypting credentials.
 /config/master.key
 
-# Ignore session and cache stores
-/tmp/sessions/*
+# Ignore environment variables
+.env
+.env.local
+.env.*.local
 /tmp/cache/*
 
 # dotenv
@@ -46,6 +48,11 @@ pickle-email-*.html
 
 # IDE
 .vscode/
+
+# JavaScript / esbuild
+node_modules/
+app/assets/builds/
+.eslintcache
 .idea/
 *.swp
 *.swo
@@ -63,3 +70,4 @@ public/assets/
 
 # Credentials
 config/credentials.yml.enc
+.github/copilot-instructions.md
