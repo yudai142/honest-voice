@@ -1,0 +1,23 @@
+{
+  "name": "honest-voice",
+  "version": "1.0.0",
+  "description": "完全匿名フィードバック収集プラットフォーム",
+  "type": "module",
+  "scripts": {
+    "build": "esbuild app/javascript/index.tsx --outfile=app/assets/builds/index.js --bundle --minify",
+    "dev": "esbuild app/javascript/index.tsx --outfile=app/assets/builds/index.js --bundle --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "esbuild": "^0.24.2",
+    "typescript": "^5.3.3",
+    "tailwindcss": "^3.4.0",
+    "daisyui": "^4.10.0"
+  }
+}
