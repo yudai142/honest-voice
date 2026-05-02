@@ -1,6 +1,4 @@
 class RootController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:index]
-
   def index
     if user_signed_in?
       if current_user.admin?

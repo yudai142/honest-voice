@@ -1,9 +1,10 @@
 module Admin
   class DashboardController < ApplicationController
+    before_action :authenticate_user!
     before_action :check_admin_role
 
     def index
-      @questions = Question.where(user_id: current_user.id).page(params[:page]).per(10)
+      @questions = Question.where(user_id: current_user.id)
       @total_questions = Question.where(user_id: current_user.id).count
       @total_answers = Answer.joins(:question).where(questions: { user_id: current_user.id }).count
     end
