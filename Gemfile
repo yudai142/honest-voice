@@ -51,6 +51,12 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  # Shoulda Matchers for test assertions
+  gem "shoulda-matchers", "~> 5.0"
+
+  # Faker for generating fake data
+  gem "faker"
 end
 
 group :development do
