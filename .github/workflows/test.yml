@@ -43,7 +43,8 @@ jobs:
       postgres:
         image: postgres:15-alpine
         env:
-          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
           POSTGRES_DB: honest_voice_test
         options: >-
           --health-cmd pg_isready
@@ -75,7 +76,7 @@ jobs:
       - name: Setup database
         env:
           RAILS_ENV: test
-          DATABASE_URL: postgresql://postgres@localhost/honest_voice_test
+          DATABASE_URL: postgresql://postgres:postgres@localhost/honest_voice_test
         run: |
           bundle exec rails db:create 2>&1 || echo "Database already exists"
           bundle exec rails db:migrate
@@ -83,7 +84,7 @@ jobs:
       - name: Run Rails tests
         env:
           RAILS_ENV: test
-          DATABASE_URL: postgresql://postgres@localhost/honest_voice_test
+          DATABASE_URL: postgresql://postgres:postgres@localhost/honest_voice_test
         run: bundle exec rspec
 
   test-summary:
