@@ -5,6 +5,7 @@ class Question < ApplicationRecord
   belongs_to :user, optional: false
   has_many :choices, dependent: :destroy
   has_many :answers, dependent: :destroy
+  accepts_nested_attributes_for :choices, reject_if: :all_blank, allow_destroy: true
 
   validates :title, presence: true
   validates :body, presence: true

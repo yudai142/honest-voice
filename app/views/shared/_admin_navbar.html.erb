@@ -14,7 +14,6 @@
       <button tabindex="0" class="btn btn-ghost">Menu</button>
       <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
         <li><a href="<%= admin_dashboard_path %>">Manage Questions</a></li>
-        <li><a href="<%= admin_answers_path %>">View Answers</a></li>
         <li><hr class="my-2"></li>
         <li>
           <%= button_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'btn btn-ghost btn-sm text-error' %>

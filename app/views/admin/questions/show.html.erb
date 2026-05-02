@@ -1,0 +1,42 @@
+<div class="container mx-auto p-6">
+  <div class="grid grid-cols-1 gap-6">
+    <div class="card bg-base-100 shadow-lg">
+      <div class="card-body">
+        <h1 class="card-title text-3xl mb-4"><%= @question.title %></h1>
+        
+        <div class="mb-4">
+          <h3 class="font-semibold text-lg mb-2">質問内容</h3>
+          <p class="whitespace-pre-wrap"><%= @question.body %></p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <span class="font-semibold">質問タイプ:</span>
+            <span class="badge badge-primary"><%= @question.question_type.upcase %></span>
+          </div>
+          <div>
+            <span class="font-semibold">ステータス:</span>
+            <span class="badge badge-secondary"><%= @question.status.upcase %></span>
+          </div>
+        </div>
+
+        <% if @question.choices.any? %>
+          <div class="mb-4">
+            <h3 class="font-semibold text-lg mb-2">選択肢</h3>
+            <ul class="list-disc list-inside space-y-2">
+              <% @question.choices.each do |choice| %>
+                <li><%= choice.label %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div class="card-actions justify-end mt-6">
+          <%= link_to 'Edit', edit_admin_question_path(@question), class: 'btn btn-primary' %>
+          <%= link_to 'Back', admin_questions_path, class: 'btn btn-ghost' %>
+          <%= link_to 'Delete', admin_question_path(@question), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-error' %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
