@@ -65,4 +65,4 @@ public/assets/
 
 # Credentials
 config/credentials.yml.enc
-.github
+.github/copilot-instructions.md
