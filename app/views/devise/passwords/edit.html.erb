@@ -1,0 +1,48 @@
+<div class="min-h-screen bg-base-200 flex items-center justify-center">
+  <div class="card w-96 bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title text-center mb-6">パスワード変更</h2>
+
+      <%= form_with(model: resource, local: true, url: password_path(resource_name), method: :patch) do |form| %>
+        <% if resource.errors.any? %>
+          <div class="alert alert-error mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l-2-2m0 0l-2-2m2 2l2-2m-2 2l-2 2m2-2l2 2m0 0l2-2m-2 2l2 2M9 1H5a2 2 0 00-2 2v18a2 2 0 002 2h4" /></svg>
+            <div>
+              <h3 class="font-bold">エラーが発生しました</h3>
+              <div class="text-xs">
+                <% resource.errors.full_messages.each do |message| %>
+                  <p><%= message %></p>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <%= form.hidden_field :reset_password_token %>
+
+        <div class="form-control w-full mb-4">
+          <%= form.label :password, "新しいパスワード", class: "label" %>
+          <%= form.password_field :password, autofocus: true, autocomplete: "new-password", placeholder: "••••••••", class: "input input-bordered w-full" %>
+          <% if @minimum_password_length %>
+            <span class="label-text-alt"><%= @minimum_password_length %> 文字以上</span>
+          <% end %>
+        </div>
+
+        <div class="form-control w-full mb-6">
+          <%= form.label :password_confirmation, "パスワード確認", class: "label" %>
+          <%= form.password_field :password_confirmation, autocomplete: "new-password", placeholder: "••••••••", class: "input input-bordered w-full" %>
+        </div>
+
+        <div class="form-control">
+          <%= form.submit "パスワード変更", class: "btn btn-primary w-full" %>
+        </div>
+      <% end %>
+
+      <div class="divider"></div>
+
+      <div class="text-center">
+        <%= link_to "ログイン", new_session_path(resource_name), class: "link link-primary text-sm" %>
+      </div>
+    </div>
+  </div>
+</div>
