@@ -15,6 +15,9 @@ Rails.application.routes.draw do
   # Admin namespace
   namespace :admin, path: 'admin' do
     get 'dashboard', to: 'dashboard#index', as: :dashboard
+    resources :questions do
+      resources :choices, only: [:create, :update, :destroy]
+    end
   end
 
   # Member namespace

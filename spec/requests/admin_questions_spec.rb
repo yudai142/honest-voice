@@ -92,9 +92,8 @@ RSpec.describe 'Admin::Questions', type: :request do
       let(:valid_params) do
         {
           question: {
-            theme: '職場環境',
-            description: '職場環境について',
-            text: '職場環境は満足度はいかがですか？',
+            title: '職場環境について',
+            body: '職場環境は満足度はいかがですか？',
             question_type: 'text'
           }
         }
@@ -116,9 +115,8 @@ RSpec.describe 'Admin::Questions', type: :request do
       let(:valid_params) do
         {
           question: {
-            theme: '職場環境',
-            description: '職場環境について',
-            text: '職場環境は満足度はいかがですか？',
+            title: '職場環境について',
+            body: '職場環境は満足度はいかがですか？',
             question_type: 'choice',
             choices_attributes: [
               { text: '非常に満足' },
@@ -140,12 +138,11 @@ RSpec.describe 'Admin::Questions', type: :request do
     end
 
     context 'バリデーション失敗' do
-      it '空の theme は拒否する' do
+      it '空の title は拒否する' do
         params = {
           question: {
-            theme: '',
-            description: 'テスト',
-            text: 'テスト質問',
+            title: '',
+            body: 'テスト質問',
             question_type: 'text'
           }
         }
@@ -164,10 +161,10 @@ RSpec.describe 'Admin::Questions', type: :request do
 
     it '質問を更新する' do
       patch "/admin/questions/#{question.id}", params: {
-        question: { theme: '新しいテーマ' }
+        question: { title: '新しいタイトル' }
       }
       question.reload
-      expect(question.theme).to eq('新しいテーマ')
+      expect(question.title).to eq('新しいタイトル')
     end
 
     it 'HTTP 200 を返す' do
