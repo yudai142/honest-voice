@@ -48,6 +48,11 @@ pickle-email-*.html
 
 # IDE
 .vscode/
+
+# JavaScript / esbuild
+node_modules/
+app/assets/builds/
+.eslintcache
 .idea/
 *.swp
 *.swo
