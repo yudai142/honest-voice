@@ -1,0 +1,265 @@
+<div class="container mx-auto p-6">
+  <div class="breadcrumbs text-sm mb-6">
+    <ul>
+      <li><%= link_to 'Admin', admin_dashboard_path, class: 'link link-hover' %></li>
+      <li><%= link_to @question.title, admin_question_path(@question), class: 'link link-hover' %></li>
+      <li>Statistics</li>
+    </ul>
+  </div>
+
+  <div class="grid grid-cols-1 gap-6">
+    <!-- 質問タイトルと詳細 -->
+    <div class="card bg-base-100 shadow-lg">
+      <div class="card-body">
+        <h1 class="card-title text-3xl mb-4"><%= @question.title %></h1>
+        <p class="text-base-content/70"><%= @question.body %></p>
+        <div class="grid grid-cols-3 gap-4 mt-4">
+          <div>
+            <span class="font-semibold">質問タイプ:</span>
+            <span class="badge badge-primary"><%= @question.question_type.upcase %></span>
+          </div>
+          <div>
+            <span class="font-semibold">ステータス:</span>
+            <span class="badge badge-secondary"><%= @question.status.upcase %></span>
+          </div>
+          <div>
+            <span class="font-semibold">回答数:</span>
+            <span class="text-xl font-bold"><%= @question.answers.count %></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 質問タイプ別の統計表示 -->
+    <% if @question.choice? || @question.rating? %>
+      <!-- 選択肢型またはレーティング型 -->
+      <div class="grid grid-cols-2 gap-6">
+        <!-- 棒グラフ -->
+        <div class="card bg-base-100 shadow-lg">
+          <div class="card-body">
+            <h2 class="card-title text-xl">回答分布（棒グラフ）</h2>
+            <div class="chart-container" style="height: 300px; position: relative;">
+              <canvas id="barChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- 円グラフ -->
+        <div class="card bg-base-100 shadow-lg">
+          <div class="card-body">
+            <h2 class="card-title text-xl">回答比率（円グラフ）</h2>
+            <div class="chart-container" style="height: 300px; position: relative;">
+              <canvas id="pieChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 選択肢統計テーブル -->
+      <div class="card bg-base-100 shadow-lg">
+        <div class="card-body">
+          <h2 class="card-title text-xl mb-4">選択肢別統計</h2>
+          <div class="overflow-x-auto">
+            <table class="table table-compact">
+              <thead>
+                <tr>
+                  <th>選択肢</th>
+                  <th>回答数</th>
+                  <th>回答率</th>
+                </tr>
+              </thead>
+              <tbody id="choiceStatsTableBody">
+                <!-- JavaScript で動的に生成 -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- テキスト型質問の回答一覧 -->
+    <% if @question.text? %>
+      <div class="card bg-base-100 shadow-lg">
+        <div class="card-body">
+          <h2 class="card-title text-xl mb-4">自由記述回答一覧</h2>
+          <div class="space-y-4" id="answersContainer">
+            <!-- 回答を動的に表示 -->
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- 統計サマリー -->
+    <div class="card bg-base-100 shadow-lg">
+      <div class="card-body">
+        <h2 class="card-title text-xl mb-4">統計サマリー</h2>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <span class="font-semibold">総回答数:</span>
+            <span class="text-lg" id="totalAnswers">-</span>
+          </div>
+          <div>
+            <span class="font-semibold">回答率:</span>
+            <span class="text-lg" id="answerRate">-</span>
+          </div>
+          <% if @question.rating? %>
+            <div>
+              <span class="font-semibold">平均レーティング:</span>
+              <span class="text-lg" id="averageRating">-</span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    const questionId = <%= @question.id %>;
+    
+    try {
+      // JSON データを取得
+      const response = await fetch(`/admin/questions/${questionId}/statistics.json`);
+      const data = await response.json();
+      
+      // 統計情報を更新
+      document.getElementById('totalAnswers').textContent = data.stats.total_answers;
+      document.getElementById('answerRate').textContent = data.stats.answer_rate + '%';
+      
+      <% if @question.rating? %>
+        if (data.stats.average_rating) {
+          document.getElementById('averageRating').textContent = 
+            data.stats.average_rating.toFixed(2) + ' / 5.0';
+        }
+      <% end %>
+      
+      <% if @question.choice? || @question.rating? %>
+        // グラフの初期化とデータ入力
+        if (data.charts.bar_data && data.charts.bar_data.length > 0) {
+          initBarChart(data);
+          initPieChart(data);
+        }
+        
+        // 選択肢統計テーブルを更新
+        updateChoiceStatsTable(data.choice_stats);
+      <% end %>
+      
+      <% if @question.text? %>
+        // テキスト回答を表示
+        displayAnswers(data.answers);
+      <% end %>
+    } catch (error) {
+      console.error('統計データ取得エラー:', error);
+    }
+  });
+  
+  function initBarChart(data) {
+    const ctx = document.getElementById('barChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: data.charts.bar_data.map(d => d.label),
+        datasets: [{
+          label: '回答数',
+          data: data.charts.bar_data.map(d => d.y),
+          backgroundColor: data.charts.colors,
+          borderColor: data.charts.colors,
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  }
+  
+  function initPieChart(data) {
+    const ctx = document.getElementById('pieChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: data.charts.pie_data.map(d => d.name),
+        datasets: [{
+          data: data.charts.pie_data.map(d => d.y),
+          backgroundColor: data.charts.colors,
+          borderColor: '#fff',
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+          }
+        }
+      }
+    });
+  }
+  
+  function updateChoiceStatsTable(choiceStats) {
+    const tbody = document.getElementById('choiceStatsTableBody');
+    tbody.innerHTML = choiceStats.map(stat => `
+      <tr>
+        <td>${escapeHtml(stat.label)}</td>
+        <td>${stat.count}</td>
+        <td>
+          <div class="flex items-center gap-2">
+            <div class="w-full bg-base-300 rounded-full h-2">
+              <div class="bg-primary h-2 rounded-full" style="width: ${stat.rate}%"></div>
+            </div>
+            <span>${stat.rate}%</span>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+  
+  function displayAnswers(answers) {
+    const container = document.getElementById('answersContainer');
+    if (answers.length === 0) {
+      container.innerHTML = '<p class="text-base-content/70">回答がありません</p>';
+      return;
+    }
+    
+    container.innerHTML = answers.map((answer, index) => `
+      <div class="border border-base-300 rounded-lg p-4">
+        <div class="flex justify-between items-start mb-2">
+          <span class="font-semibold">回答 #${index + 1}</span>
+          <span class="text-xs text-base-content/50">${new Date(answer.created_at).toLocaleString('ja-JP')}</span>
+        </div>
+        <p class="whitespace-pre-wrap">${escapeHtml(answer.body)}</p>
+      </div>
+    `).join('');
+  }
+  
+  function escapeHtml(text) {
+    const map = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, m => map[m]);
+  }
+</script>
+
+<style>
+  .chart-container {
+    position: relative;
+  }
+</style>

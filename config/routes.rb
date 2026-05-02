@@ -17,6 +17,7 @@ Rails.application.routes.draw do
     get 'dashboard', to: 'dashboard#index', as: :dashboard
     resources :questions do
       resources :choices, only: [:create, :update, :destroy]
+      get 'statistics', to: 'statistics#show', as: :statistics
     end
   end
 

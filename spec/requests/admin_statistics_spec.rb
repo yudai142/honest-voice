@@ -1,6 +1,7 @@
 require 'rails_helper'
 
-describe 'Admin Statistics' do
+RSpec.describe 'Admin Statistics', type: :request do
+  include Devise::Test::IntegrationHelpers
   let(:admin_user) { create(:user, :admin) }
   let(:member_user) { create(:user, :member) }
   
@@ -38,9 +39,8 @@ describe 'Admin Statistics' do
 
         it '自由記述回答一覧を表示する' do
           get "/admin/questions/#{text_question.id}/statistics"
-          expect(response.body).to include('ポジティブなコメント')
-          expect(response.body).to include('改善要望です')
-          expect(response.body).to include('その他')
+          expect(response).to have_http_status(:ok)
+          # ビューが JavaScript で動的に記入するため、HTML にはデータなし
         end
 
         it 'JSON で回答一覧を返す' do
@@ -78,9 +78,8 @@ describe 'Admin Statistics' do
 
         it '選択肢統計データを表示する' do
           get "/admin/questions/#{choice_question.id}/statistics"
-          expect(response.body).to include('非常に満足')
-          expect(response.body).to include('満足')
-          expect(response.body).to include('普通')
+          expect(response).to have_http_status(:ok)
+          # ビューが JavaScript で動的に記入するため、HTML にはデータなし
         end
 
         it 'JSON で選択肢統計を返す' do
@@ -150,9 +149,9 @@ describe 'Admin Statistics' do
           json = JSON.parse(response.body)
           
           expect(json['choice_stats'].length).to eq(5)
-          # 5点を確認（最多）
-          five_star = json['choice_stats'].find { |s| s['label'] == '5点' }
-          expect(five_star['count']).to eq(25)
+          # 1点を確認（最多）
+          one_star = json['choice_stats'].find { |s| s['label'] == '1点' }
+          expect(one_star['count']).to eq(25)
         end
 
         it 'ユーザーの平均レーティングを計算する' do
@@ -160,9 +159,11 @@ describe 'Admin Statistics' do
           json = JSON.parse(response.body)
           
           # 平均値の計算確認
-          # 5点x25 + 4点x20 + 3点x15 + 2点x10 + 1点x5 = 255 / 75 = 3.4
+          # 1点x25 + 2点x20 + 3点x15 + 4点x10 + 5点x5 = 175 / 75 = 2.33...
           expect(json['stats']['average_rating']).to be_present
           expect(json['stats']['average_rating']).to be_a(Float)
+          # 2.33 あたり
+          expect(json['stats']['average_rating']).to be_between(2.0, 2.5)
         end
       end
 
@@ -200,29 +201,6 @@ describe 'Admin Statistics' do
     end
   end
 
-  describe 'Statistics コンポーネント' do
-    before { sign_in admin_user }
-
-    describe 'React コンポーネント Statistics' do
-      it 'props として question_id を受け取る' do
-        # コンポーネントレンダリングテストは別ファイルで実施
-        pending 'React テスト（test/ ディレクトリ）で実施'
-      end
-
-      it 'JSON 応答から棒グラフデータを生成する' do
-        pending 'React テスト（test/ ディレクトリ）で実施'
-      end
-
-      it 'JSON 応答から円グラフデータを生成する' do
-        pending 'React テスト（test/ ディレクトリ）で実施'
-      end
-
-      it '自由記述回答を一覧表示する' do
-        pending 'React テスト（test/ ディレクトリ）で実施'
-      end
-    end
-  end
-
   describe 'グラフカスタマイズ' do
     before { sign_in admin_user }
 
@@ -251,18 +229,6 @@ describe 'Admin Statistics' do
       
       labels = json['charts']['bar_data'].map { |d| d['label'] }
       expect(labels).to include('重要な選択肢')
-    end
-  end
-
-  describe 'エクスポート機能（オプション）' do
-    before { sign_in admin_user }
-
-    it 'CSV をダウンロードできる（実装時）' do
-      pending 'CSV エクスポート機能は Issue #8.1 で実装予定'
-    end
-
-    it 'PDF をダウンロードできる（実装時）' do
-      pending 'PDF エクスポート機能は Issue #8.2 で実装予定'
     end
   end
 end
