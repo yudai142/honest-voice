@@ -35,12 +35,12 @@ RSpec.describe 'Defects Fix Regression', type: :request do
 
     it 'rating_value を送信すると回答と選択肢が保存される' do
       expect do
-        post "/questions/#{rating_question.id}/answers", params: {
+        post "/questions/#{rating_question.id}/answers.html", params: {
           answer: {
             rating_value: '4',
             session_id: 'rating-flow-session-001'
           }
-        }, format: :html
+        }
       end.to change(Answer, :count).by(1)
 
       expect(response).to redirect_to(member_dashboard_path)
