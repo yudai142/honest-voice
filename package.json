@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "build": "esbuild app/javascript/index.tsx --outfile=app/assets/builds/index.js --bundle --minify",
-    "dev": "esbuild app/javascript/index.tsx --outfile=app/assets/builds/index.js --bundle --watch",
+    "dev": "esbuild app/javascript/index.tsx --outfile=app/assets/builds/index.js --bundle --watch=forever",
+    "css:build": "tailwindcss -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --minify",
+    "css:watch": "tailwindcss -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --watch",
     "test": "echo \"No React tests configured yet\" && exit 0",
     "lint": "echo \"ESLint setup pending\" && exit 0"
   },

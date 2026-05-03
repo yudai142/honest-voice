@@ -31,7 +31,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: honest_voice_development
-    command: bash -c "bundle exec rails db:create db:migrate 2>/dev/null || true && bundle exec rails server -b 0.0.0.0"
+    command: bash -c "bundle exec rails db:create db:migrate 2>/dev/null || true && npm run css:build && npm run build && (npm run css:watch &) && (npm run dev &) && bundle exec rails server -b 0.0.0.0"
     stdin_open: true
     tty: true
 
