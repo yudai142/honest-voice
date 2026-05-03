@@ -5,6 +5,7 @@ class AnswersController < ApplicationController
   # POST /questions/:question_id/answers
   def create
     @answer = @question.answers.build(answer_params)
+    apply_rating_fallback_choice!
 
     # 重複チェック
     session_id_value = answer_params[:session_id].presence || session.id.to_s
@@ -69,6 +70,19 @@ class AnswersController < ApplicationController
 
   def answer_params
     params.require(:answer).permit(:body, :session_id, :choice_id)
+  end
+
+  def apply_rating_fallback_choice!
+    return unless @question.rating?
+    return if @answer.choice_id.present?
+
+    rating_value = params.dig(:answer, :rating_value).to_s
+    return unless rating_value.match?(/\A[1-5]\z/)
+
+    choice = @question.choices.find_by(label: rating_value)
+    choice ||= @question.choices.order(:id)[rating_value.to_i - 1]
+    choice ||= @question.choices.find_or_create_by!(label: rating_value)
+    @answer.choice = choice
   end
 
   def serialize_answer(answer)

@@ -47,14 +47,16 @@
           <% elsif @question.rating? %>
             <div class="form-control mb-6">
               <p class="label-text font-semibold mb-3">評価を選んでください</p>
-              <div class="flex gap-4 flex-wrap">
-                <% @question.choices.each do |choice| %>
-                  <label class="cursor-pointer flex flex-col items-center gap-1">
-                    <%= f.radio_button :choice_id, choice.id, class: 'radio radio-primary' %>
-                    <span class="label-text"><%= choice.label %></span>
-                  </label>
-                <% end %>
+              <div class="bg-base-200 rounded-xl p-4 border border-base-300 inline-block">
+                <div class="rating rating-lg gap-1">
+                  <input type="radio" name="answer[rating_value]" value="" class="rating-hidden" />
+                  <% (1..5).each do |value| %>
+                    <%= radio_button_tag 'answer[rating_value]', value, false, class: 'mask mask-star-2 bg-warning', aria: { label: "#{value} 点" } %>
+                  <% end %>
+                </div>
               </div>
+              <p class="text-xs text-base-content/70 mt-2">1（低い）〜5（高い）で評価してください</p>
+              <%= f.hidden_field :choice_id, value: '' %>
             </div>
           <% end %>
 

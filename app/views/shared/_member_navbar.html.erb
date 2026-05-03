@@ -15,7 +15,6 @@
       <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
         <li><a href="<%= member_dashboard_path %>" class="text-black">質問に回答する</a></li>
         <li><a href="<%= member_answers_path %>" class="text-black">自分の回答</a></li>
-        <li><hr class="my-2"></li>
         <li>
           <%= button_to 'サインアウト', destroy_user_session_path, method: :delete, class: 'btn btn-ghost btn-sm text-error' %>
         </li>
