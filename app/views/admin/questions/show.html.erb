@@ -32,9 +32,9 @@
         <% end %>
 
         <div class="card-actions justify-end mt-6">
-          <%= link_to 'Edit', edit_admin_question_path(@question), class: 'btn btn-primary' %>
-          <%= link_to 'Back', admin_questions_path, class: 'btn btn-ghost' %>
-          <%= link_to 'Delete', admin_question_path(@question), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-error' %>
+          <%= link_to '編集', edit_admin_question_path(@question), class: 'btn btn-primary' %>
+          <%= link_to '戻る', admin_questions_path, class: 'btn btn-ghost' %>
+          <%= link_to '削除', admin_question_path(@question), method: :delete, data: { confirm: '本当に削除しますか？' }, class: 'btn btn-error' %>
         </div>
       </div>
     </div>

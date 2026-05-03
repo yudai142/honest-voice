@@ -29,6 +29,7 @@ Rails.application.routes.draw do
   # Member namespace
   namespace :member, path: 'member' do
     get 'dashboard', to: 'dashboard#index', as: :dashboard
+    resources :answers, only: [:index]
   end
 
   # Health check and PWA

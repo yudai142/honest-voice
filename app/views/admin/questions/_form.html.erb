@@ -1,0 +1,38 @@
+<%= form_with model: [:admin, question], url: question.persisted? ? admin_question_path(question, format: :html) : admin_questions_path(format: :html), local: true do |f| %>
+  <% if question.errors.any? %>
+    <div class="alert alert-error mb-4">
+      <ul class="list-disc list-inside">
+        <% question.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-control mb-4">
+    <%= f.label :title, 'タイトル', class: 'label label-text font-semibold' %>
+    <%= f.text_field :title, class: 'input input-bordered w-full', placeholder: '質問タイトルを入力' %>
+  </div>
+
+  <div class="form-control mb-4">
+    <%= f.label :body, '質問内容', class: 'label label-text font-semibold' %>
+    <%= f.text_area :body, rows: 6, class: 'textarea textarea-bordered w-full', placeholder: '質問内容を入力' %>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="form-control mb-4">
+      <%= f.label :question_type, '質問タイプ', class: 'label label-text font-semibold' %>
+      <%= f.select :question_type, Question.question_types.keys.map { |k| [k, k] }, {}, class: 'select select-bordered w-full' %>
+    </div>
+
+    <div class="form-control mb-4">
+      <%= f.label :status, 'ステータス', class: 'label label-text font-semibold' %>
+      <%= f.select :status, Question.statuses.keys.map { |k| [k, k] }, {}, class: 'select select-bordered w-full' %>
+    </div>
+  </div>
+
+  <div class="card-actions justify-end mt-6">
+    <%= link_to 'キャンセル', admin_questions_path, class: 'btn btn-ghost' %>
+    <%= f.submit question.persisted? ? '更新する' : '作成する', class: 'btn btn-primary' %>
+  </div>
+<% end %>

@@ -52,9 +52,17 @@ class Admin::QuestionsController < ApplicationController
     @question.status ||= 'draft'
 
     if @question.save
-      render json: { question: serialize_question_with_stats(@question) }, status: :created
+      if html_form_request?
+        redirect_to admin_question_path(@question), notice: '質問を作成しました。'
+      else
+        render json: { question: serialize_question_with_stats(@question) }, status: :created
+      end
     else
-      render json: { errors: @question.errors.full_messages }, status: :unprocessable_entity
+      if html_form_request?
+        render :new, status: :unprocessable_entity
+      else
+        render json: { errors: @question.errors.full_messages }, status: :unprocessable_entity
+      end
     end
   end
 
@@ -65,9 +73,17 @@ class Admin::QuestionsController < ApplicationController
   # PATCH /admin/questions/:id
   def update
     if @question.update(question_params)
-      render json: { question: @question }, status: :ok
+      if html_form_request?
+        redirect_to admin_question_path(@question), notice: '質問を更新しました。'
+      else
+        render json: { question: @question }, status: :ok
+      end
     else
-      render json: { errors: @question.errors.full_messages }, status: :unprocessable_entity
+      if html_form_request?
+        render :edit, status: :unprocessable_entity
+      else
+        render json: { errors: @question.errors.full_messages }, status: :unprocessable_entity
+      end
     end
   end
 
@@ -82,7 +98,14 @@ class Admin::QuestionsController < ApplicationController
   def set_question
     @question = Question.find(params[:id])
   rescue ActiveRecord::RecordNotFound
-    render json: { error: 'Question not found' }, status: :not_found
+    respond_to do |format|
+      format.html { redirect_to admin_questions_path, alert: '質問が見つかりませんでした。' }
+      format.json { render json: { error: 'Question not found' }, status: :not_found }
+    end
+  end
+
+  def html_form_request?
+    params[:format] == 'html'
   end
 
   def question_params

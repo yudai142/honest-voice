@@ -1,0 +1,72 @@
+<div class="container mx-auto py-8 max-w-2xl">
+  <div class="mb-4">
+    <%= link_to '← ダッシュボードに戻る', member_dashboard_path, class: 'link link-primary text-sm' %>
+  </div>
+
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h1 class="card-title text-2xl mb-2"><%= @question.title %></h1>
+      <p class="text-base-content/70 mb-6 whitespace-pre-wrap"><%= @question.body %></p>
+
+      <% if @already_answered %>
+        <div class="alert alert-success">
+          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>この質問にはすでに回答済みです。</span>
+        </div>
+      <% else %>
+        <%= form_with model: [@question, @answer], url: question_answers_path(@question, format: :html), local: true do |f| %>
+          <% if @answer.errors.any? %>
+            <div class="alert alert-error mb-4">
+              <ul class="list-disc list-inside">
+                <% @answer.errors.full_messages.each do |msg| %>
+                  <li><%= msg %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <% if @question.text? %>
+            <div class="form-control mb-6">
+              <%= f.label :body, '回答', class: 'label label-text font-semibold' %>
+              <%= f.text_area :body, rows: 5, placeholder: 'ここに回答を入力してください', class: 'textarea textarea-bordered w-full' %>
+            </div>
+
+          <% elsif @question.choice? %>
+            <div class="form-control mb-6">
+              <p class="label-text font-semibold mb-3">選択肢を選んでください</p>
+              <% @question.choices.each do |choice| %>
+                <label class="label cursor-pointer justify-start gap-4 py-2">
+                  <%= f.radio_button :choice_id, choice.id, class: 'radio radio-primary' %>
+                  <span class="label-text text-base"><%= choice.label %></span>
+                </label>
+              <% end %>
+            </div>
+
+          <% elsif @question.rating? %>
+            <div class="form-control mb-6">
+              <p class="label-text font-semibold mb-3">評価を選んでください</p>
+              <div class="bg-base-200 rounded-xl p-4 border border-base-300 inline-block">
+                <div class="rating rating-lg gap-1">
+                  <input type="radio" name="answer[rating_value]" value="" class="rating-hidden" />
+                  <% (1..5).each do |value| %>
+                    <%= radio_button_tag 'answer[rating_value]', value, false, class: 'mask mask-star-2 bg-warning', aria: { label: "#{value} 点" } %>
+                  <% end %>
+                </div>
+              </div>
+              <p class="text-xs text-base-content/70 mt-2">1（低い）〜5（高い）で評価してください</p>
+              <%= f.hidden_field :choice_id, value: '' %>
+            </div>
+          <% end %>
+
+          <%= f.hidden_field :session_id, value: session.id.to_s %>
+
+          <div class="card-actions justify-end mt-4">
+            <%= f.submit '回答を送信', class: 'btn btn-primary' %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>

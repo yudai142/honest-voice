@@ -1,5 +1,5 @@
 <div class="container mx-auto">
-  <h1 class="text-3xl font-bold mb-6">Member Dashboard</h1>
+  <h1 class="text-3xl font-bold mb-6">メンバーダッシュボード</h1>
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
     <!-- Statistics Cards -->
@@ -10,7 +10,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
           </svg>
         </div>
-        <div class="stat-title">Available Questions</div>
+        <div class="stat-title">公開中の質問</div>
         <div class="stat-value"><%= @total_questions %></div>
       </div>
     </div>
@@ -22,14 +22,14 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
         </div>
-        <div class="stat-title">Questions Answered</div>
+        <div class="stat-title">回答済み質問</div>
         <div class="stat-value"><%= @answered_questions %></div>
       </div>
     </div>
 
     <div class="stats stats-vertical shadow">
       <div class="stat">
-        <div class="stat-title">Remaining</div>
+        <div class="stat-title">未回答</div>
         <div class="stat-value"><%= @total_questions - @answered_questions %></div>
       </div>
     </div>
@@ -38,7 +38,7 @@
   <!-- Available Questions -->
   <div class="card bg-base-100 shadow-xl">
     <div class="card-body">
-      <h2 class="card-title">Questions to Answer</h2>
+      <h2 class="card-title">回答可能な質問</h2>
 
       <% if @questions.any? %>
         <div class="space-y-4">
@@ -55,9 +55,9 @@
 
                   <div class="flex gap-2">
                     <% if current_user.answers.any? { |a| a.question_id == question.id } %>
-                      <span class="badge badge-success">Already Answered</span>
+                      <span class="badge badge-success">回答済み</span>
                     <% else %>
-                      <%= link_to 'Answer', member_question_path(question), class: 'btn btn-sm btn-primary' %>
+                      <%= link_to '回答する', question_path(question), class: 'btn btn-sm btn-primary' %>
                     <% end %>
                   </div>
                 </div>
@@ -66,17 +66,12 @@
           <% end %>
         </div>
 
-        <% if @questions.total_pages > 1 %>
-          <div class="mt-6 flex justify-center">
-            <%= paginate @questions %>
-          </div>
-        <% end %>
       <% else %>
         <div class="alert alert-info">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
-          <span>No questions available at the moment.</span>
+          <span>現在回答可能な質問はありません。</span>
         </div>
       <% end %>
     </div>
