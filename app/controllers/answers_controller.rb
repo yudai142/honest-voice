@@ -20,7 +20,7 @@ class AnswersController < ApplicationController
       return
     end
 
-    @answer.user = current_user if user_signed_in?
+    @answer.user = current_user if html_form_request? && user_signed_in?
 
     if @answer.save
       if html_form_request?

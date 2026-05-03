@@ -40,7 +40,7 @@ RSpec.describe 'Defects Fix Regression', type: :request do
             rating_value: '4',
             session_id: 'rating-flow-session-001'
           }
-        }
+        }, format: :html
       end.to change(Answer, :count).by(1)
 
       expect(response).to redirect_to(member_dashboard_path)
