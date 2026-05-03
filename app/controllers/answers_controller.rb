@@ -1,23 +1,38 @@
 class AnswersController < ApplicationController
+  before_action :authenticate_user!, only: [:create]
   before_action :set_question, only: [:create, :index]
 
   # POST /questions/:question_id/answers
   def create
     @answer = @question.answers.build(answer_params)
 
-    # Check for duplicate answers
-    session_id = answer_params[:session_id]
-    if session_id.present?
-      session_hash = Digest::SHA256.hexdigest(session_id)
-      if @question.answers.exists?(session_id_hash: session_hash)
-        return render json: { errors: ['This session has already answered this question'] }, status: :unprocessable_entity
+    # 重複チェック
+    session_id_value = answer_params[:session_id].presence || session.id.to_s
+    session_hash = Digest::SHA256.hexdigest(session_id_value)
+
+    if @question.answers.exists?(session_id_hash: session_hash)
+      respond_to do |format|
+        format.html { redirect_to question_path(@question), alert: 'すでに回答済みです。' }
+        format.json { render json: { errors: ['This session has already answered this question'] }, status: :unprocessable_entity }
       end
+      return
     end
 
+    @answer.user = current_user if user_signed_in?
+
     if @answer.save
-      render json: { answer: @answer }, status: :created
+      respond_to do |format|
+        format.html { redirect_to member_dashboard_path, notice: '回答を送信しました。' }
+        format.json { render json: { answer: @answer }, status: :created }
+      end
     else
-      render json: { errors: @answer.errors.full_messages }, status: :unprocessable_entity
+      respond_to do |format|
+        format.html do
+          @already_answered = false
+          render 'questions/show', status: :unprocessable_entity
+        end
+        format.json { render json: { errors: @answer.errors.full_messages }, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -46,7 +61,10 @@ class AnswersController < ApplicationController
   def set_question
     @question = Question.find(params[:question_id])
   rescue ActiveRecord::RecordNotFound
-    render json: { error: 'Question not found' }, status: :not_found
+    respond_to do |format|
+      format.html { redirect_to member_dashboard_path, alert: '質問が見つかりませんでした。' }
+      format.json { render json: { error: 'Question not found' }, status: :not_found }
+    end
   end
 
   def answer_params
