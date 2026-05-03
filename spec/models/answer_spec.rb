@@ -8,9 +8,31 @@ describe Answer, type: :model do
   end
 
   describe 'validations' do
-    subject { build(:answer) }
+    it { is_expected.to validate_presence_of(:session_id) }
 
-    it { is_expected.to validate_presence_of(:body) }
+    it 'text質問では body が必須' do
+      question = create(:question, :text_type)
+      answer = build(:answer, question: question, body: nil, session_id: 'text-session')
+
+      expect(answer).not_to be_valid
+      expect(answer.errors[:body]).to include("can't be blank")
+    end
+
+    it 'choice質問では choice_id が必須' do
+      question = create(:question, :choice_type)
+      answer = build(:answer, question: question, body: nil, choice: nil, session_id: 'choice-session')
+
+      expect(answer).not_to be_valid
+      expect(answer.errors[:choice_id]).to include("can't be blank")
+    end
+
+    it 'rating質問では choice_id が必須' do
+      question = create(:question, :rating_type)
+      answer = build(:answer, question: question, body: nil, choice: nil, session_id: 'rating-session')
+
+      expect(answer).not_to be_valid
+      expect(answer.errors[:choice_id]).to include("can't be blank")
+    end
   end
 
   describe 'session_id hashing' do
