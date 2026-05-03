@@ -82,7 +82,8 @@ RUN npm ci --omit=dev || npm install --production
 COPY . .
 
 # Bootsnap + アセットプリコンパイル
-RUN bundle exec bootsnap precompile app/ lib/ && \
+RUN npm run build && \
+    bundle exec bootsnap precompile app/ lib/ && \
     SECRET_KEY_BASE_DUMMY=1 bundle exec rails assets:precompile
 
 # 非root ユーザー
