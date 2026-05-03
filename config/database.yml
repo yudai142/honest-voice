@@ -35,3 +35,7 @@ test:
 production:
   <<: *default
   url: <%= ENV["DATABASE_URL"] %>
+  # NeonDB (PostgreSQL) 接続設定
+  connect_timeout: 10
+  variables:
+    statement_timeout: 5000
