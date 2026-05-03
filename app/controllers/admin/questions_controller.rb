@@ -52,9 +52,15 @@ class Admin::QuestionsController < ApplicationController
     @question.status ||= 'draft'
 
     if @question.save
-      render json: { question: serialize_question_with_stats(@question) }, status: :created
+      respond_to do |format|
+        format.html { redirect_to admin_question_path(@question), notice: '質問を作成しました。' }
+        format.json { render json: { question: serialize_question_with_stats(@question) }, status: :created }
+      end
     else
-      render json: { errors: @question.errors.full_messages }, status: :unprocessable_entity
+      respond_to do |format|
+        format.html { render :new, status: :unprocessable_entity }
+        format.json { render json: { errors: @question.errors.full_messages }, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -65,9 +71,15 @@ class Admin::QuestionsController < ApplicationController
   # PATCH /admin/questions/:id
   def update
     if @question.update(question_params)
-      render json: { question: @question }, status: :ok
+      respond_to do |format|
+        format.html { redirect_to admin_question_path(@question), notice: '質問を更新しました。' }
+        format.json { render json: { question: @question }, status: :ok }
+      end
     else
-      render json: { errors: @question.errors.full_messages }, status: :unprocessable_entity
+      respond_to do |format|
+        format.html { render :edit, status: :unprocessable_entity }
+        format.json { render json: { errors: @question.errors.full_messages }, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -82,7 +94,10 @@ class Admin::QuestionsController < ApplicationController
   def set_question
     @question = Question.find(params[:id])
   rescue ActiveRecord::RecordNotFound
-    render json: { error: 'Question not found' }, status: :not_found
+    respond_to do |format|
+      format.html { redirect_to admin_questions_path, alert: '質問が見つかりませんでした。' }
+      format.json { render json: { error: 'Question not found' }, status: :not_found }
+    end
   end
 
   def question_params
