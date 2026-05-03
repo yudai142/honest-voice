@@ -10,7 +10,7 @@ gem "pg", "~> 1.5"      # 本番用 PostgreSQL
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 # Use Tailwind CSS [https://github.com/rails/tailwindcss-rails]
-gem "tailwindcss-rails"
+gem "tailwindcss-rails", "~> 3.3.1"
 # Building JSON APIs with Rails [https://github.com/rails/jbuilder]
 gem "jbuilder"
 gem "rack-cors"
