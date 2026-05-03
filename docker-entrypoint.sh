@@ -2,7 +2,6 @@
 set -e
 
 # Rails アプリケーション entrypoint
-# 開発環境用
 
 cd /rails
 
@@ -11,7 +10,11 @@ echo "Environment: ${RAILS_ENV:-development}"
 
 # データベースセットアップ
 echo "📊 Setting up database..."
-bundle exec rails db:create db:migrate 2>/dev/null || true
+if [ "${RAILS_ENV}" = "production" ]; then
+  bundle exec rails db:migrate
+else
+  bundle exec rails db:create db:migrate 2>/dev/null || true
+fi
 
 # PID ファイル削除
 if [ -f tmp/pids/server.pid ]; then

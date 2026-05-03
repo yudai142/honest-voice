@@ -5,7 +5,6 @@ services:
     dockerfilePath: ./Dockerfile
     dockerContext: .
     dockerCommand: bundle exec puma -b tcp://0.0.0.0:3000
-    buildTarget: production
     region: oregon
     plan: free
     healthCheckPath: /
@@ -15,12 +14,15 @@ services:
       - key: SECRET_KEY_BASE
         generateValue: true
       - key: DATABASE_URL
-        value: sqlite3:/rails/storage/production.sqlite3
+        fromDatabase:
+          name: honest-voice-db
+          property: connectionString
       - key: RAILS_LOG_TO_STDOUT
         value: "1"
       - key: RAILS_SERVE_STATIC_FILES
         value: "1"
-    disk:
-      name: sqlite-data
-      mountPath: /rails/storage
-      sizeGB: 1
+
+databases:
+  - name: honest-voice-db
+    region: oregon
+    plan: free
