@@ -13,6 +13,7 @@ gem "puma", ">= 5.0"
 gem "tailwindcss-rails"
 # Building JSON APIs with Rails [https://github.com/rails/jbuilder]
 gem "jbuilder"
+gem "rack-cors"
 
 # 認証フレームワーク
 gem "devise"
