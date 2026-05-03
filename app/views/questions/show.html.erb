@@ -16,7 +16,7 @@
           <span>この質問にはすでに回答済みです。</span>
         </div>
       <% else %>
-        <%= form_with model: [@question, @answer], url: question_answers_path(@question), local: true do |f| %>
+        <%= form_with model: [@question, @answer], url: question_answers_path(@question, format: :html), local: true do |f| %>
           <% if @answer.errors.any? %>
             <div class="alert alert-error mb-4">
               <ul class="list-disc list-inside">
