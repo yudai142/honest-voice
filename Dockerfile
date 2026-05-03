@@ -99,5 +99,5 @@ RUN chmod +x /rails/docker-entrypoint.sh
 ENTRYPOINT ["/rails/docker-entrypoint.sh"]
 
 # Puma サーバー起動
-CMD ["bundle", "exec", "puma", "-b", "tcp://0.0.0.0:3000"]
+CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
 

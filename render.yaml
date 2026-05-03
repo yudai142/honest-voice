@@ -4,7 +4,7 @@ services:
     runtime: docker
     dockerfilePath: ./Dockerfile
     dockerContext: .
-    dockerCommand: bundle exec puma -b tcp://0.0.0.0:3000
+    dockerCommand: bundle exec puma -C config/puma.rb
     region: oregon
     plan: free
     healthCheckPath: /
