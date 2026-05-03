@@ -1,5 +1,5 @@
 <div class="container mx-auto">
-  <h1 class="text-3xl font-bold mb-6">Admin Dashboard</h1>
+  <h1 class="text-3xl font-bold mb-6">管理者ダッシュボード</h1>
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
     <!-- Statistics Cards -->
@@ -10,7 +10,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
           </svg>
         </div>
-        <div class="stat-title">Total Questions</div>
+        <div class="stat-title">総質問数</div>
         <div class="stat-value"><%= @total_questions %></div>
       </div>
     </div>
@@ -22,14 +22,14 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m6 2a6 6 0 11-12 0 6 6 0 0112 0z"></path>
           </svg>
         </div>
-        <div class="stat-title">Total Answers</div>
+        <div class="stat-title">総回答数</div>
         <div class="stat-value"><%= @total_answers %></div>
       </div>
     </div>
 
     <div class="stats stats-vertical shadow">
       <div class="stat">
-        <div class="stat-title">Average Responses</div>
+        <div class="stat-title">平均回答数</div>
         <div class="stat-value"><%= @total_questions > 0 ? (@total_answers / @total_questions).round(1) : 0 %></div>
       </div>
     </div>
@@ -38,18 +38,18 @@
   <!-- Recent Questions -->
   <div class="card bg-base-100 shadow-xl">
     <div class="card-body">
-      <h2 class="card-title">Recent Questions</h2>
+      <h2 class="card-title">最近の質問</h2>
 
       <div class="overflow-x-auto">
         <% if @questions.any? %>
           <table class="table table-zebra w-full">
             <thead>
               <tr>
-                <th>Title</th>
-                <th>Type</th>
-                <th>Status</th>
-                <th>Answers</th>
-                <th>Actions</th>
+                <th>タイトル</th>
+                <th>タイプ</th>
+                <th>ステータス</th>
+                <th>回答数</th>
+                <th>操作</th>
               </tr>
             </thead>
             <tbody>
@@ -60,8 +60,8 @@
                   <td><span class="badge badge-<%= question.draft? ? 'warning' : question.published? ? 'info' : 'success' %>"><%= question.status %></span></td>
                   <td><%= question.answers.count %></td>
                   <td>
-                    <%= link_to 'View', admin_question_path(question), class: 'btn btn-xs btn-primary' %>
-                    <%= link_to 'Edit', edit_admin_question_path(question), class: 'btn btn-xs btn-warning' %>
+                    <%= link_to '詳細', admin_question_path(question), class: 'btn btn-xs btn-primary' %>
+                    <%= link_to '編集', edit_admin_question_path(question), class: 'btn btn-xs btn-warning' %>
                   </td>
                 </tr>
               <% end %>
@@ -72,7 +72,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
-            <span>No questions yet. <%= link_to 'Create one', new_admin_question_path, class: 'link link-primary' %></span>
+            <span>質問がまだありません。<%= link_to '作成する', new_admin_question_path, class: 'link link-primary' %></span>
           </div>
         <% end %>
       </div>
@@ -80,6 +80,6 @@
   </div>
 
   <div class="mt-6">
-    <%= link_to 'Create New Question', new_admin_question_path, class: 'btn btn-primary' %>
+    <%= link_to '新しい質問を作成', new_admin_question_path, class: 'btn btn-primary' %>
   </div>
 </div>
