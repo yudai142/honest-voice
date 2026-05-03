@@ -14,7 +14,9 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <%= javascript_include_tag "index", "data-turbo-track": "reload", defer: true %>
+    <% if File.exist?(Rails.root.join('app/assets/builds/index.js')) %>
+      <%= javascript_include_tag "index", "data-turbo-track": "reload", defer: true %>
+    <% end %>
   </head>
 
   <body class="flex flex-col min-h-screen bg-gray-50">
