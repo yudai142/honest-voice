@@ -3,8 +3,8 @@ class Answer < ApplicationRecord
   belongs_to :user, optional: true
   belongs_to :choice, optional: true
 
-  validates :body, presence: true
   validates :session_id, presence: true
+  validate :validate_body_or_choice
 
   before_save :set_session_id_hash
 
@@ -13,6 +13,19 @@ class Answer < ApplicationRecord
   def set_session_id_hash
     if session_id.present?
       self.session_id_hash = Digest::SHA256.hexdigest(session_id)
+    end
+  end
+
+  def validate_body_or_choice
+    question_type = question&.question_type
+
+    case question_type
+    when 'text'
+      errors.add(:body, "can't be blank") if body.blank?
+    when 'choice'
+      errors.add(:choice_id, "can't be blank") if choice_id.blank?
+    when 'rating'
+      errors.add(:choice_id, "can't be blank") if choice_id.blank?
     end
   end
 end

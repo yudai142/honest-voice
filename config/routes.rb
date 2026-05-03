@@ -12,9 +12,14 @@ Rails.application.routes.draw do
     resources :answers, only: [:create, :index]
   end
 
+  # Validation
+  post 'validate-answer', to: 'validation#validate_answer'
+
   # Admin namespace
   namespace :admin, path: 'admin' do
     get 'dashboard', to: 'dashboard#index', as: :dashboard
+    get 'form-template', to: 'forms#template', as: :form_template
+    post 'validate-question', to: 'forms#validate_question'
     resources :questions do
       resources :choices, only: [:create, :update, :destroy]
       get 'statistics', to: 'statistics#show', as: :statistics

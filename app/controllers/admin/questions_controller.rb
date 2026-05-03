@@ -52,7 +52,7 @@ class Admin::QuestionsController < ApplicationController
     @question.status ||= 'draft'
 
     if @question.save
-      render json: { question: @question }, status: :created
+      render json: { question: serialize_question_with_stats(@question) }, status: :created
     else
       render json: { errors: @question.errors.full_messages }, status: :unprocessable_entity
     end
@@ -86,7 +86,7 @@ class Admin::QuestionsController < ApplicationController
   end
 
   def question_params
-    params.require(:question).permit(:title, :body, :description, :text, :question_type, choices_attributes: [:id, :text, :_destroy])
+    params.require(:question).permit(:title, :body, :description, :text, :question_type, :status, choices_attributes: [:id, :label, :text, :_destroy])
   end
 
   def serialize_questions(questions)
@@ -99,6 +99,7 @@ class Admin::QuestionsController < ApplicationController
       title: question.title,
       body: question.body,
       question_type: question.question_type,
+      status: question.status,
       choices: question.choices.map { |c| { id: c.id, text: c.label } },
       stats: calculate_stats(question),
       choice_stats: calculate_choice_stats(question),

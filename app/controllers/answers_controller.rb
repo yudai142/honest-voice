@@ -23,8 +23,22 @@ class AnswersController < ApplicationController
 
   # GET /questions/:question_id/answers
   def index
-    @answers = @question.answers.includes(:choice).order(created_at: :desc)
-    render json: { answers: @answers.map { |a| serialize_answer(a) } }, status: :ok
+    page = (params[:page] || 1).to_i
+    per_page = (params[:per_page] || 10).to_i
+    offset = (page - 1) * per_page
+
+    all_answers = @question.answers.includes(:choice).order(created_at: :desc)
+    @answers = all_answers.offset(offset).limit(per_page)
+    total_count = all_answers.count
+
+    render json: {
+      answers: @answers.map { |a| serialize_answer(a) },
+      pagination: {
+        total_count: total_count,
+        page: page,
+        per_page: per_page
+      }
+    }, status: :ok
   end
 
   private
