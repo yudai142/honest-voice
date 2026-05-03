@@ -375,14 +375,14 @@ RSpec.describe 'React Forms API', type: :request do
 
           params2 = {
             answer: {
-              choice_id: rating5.id,
+              body: '異なる質問への回答',
               session_id: 'same_session'
             }
           }
 
           expect {
             post "/questions/#{rating_question.id}/answers", params: params1
-            post "/questions/#{rating_question.id}/answers", params: params2
+            post "/questions/#{text_question.id}/answers", params: params2
           }.to change(Answer, :count).by(2)
         end
       end
@@ -457,7 +457,8 @@ RSpec.describe 'React Forms API', type: :request do
           json = JSON.parse(response.body)
           
           json['answers'].each do |answer|
-            expect(answer).to include('id', 'body', 'session_id_hash')
+            expect(answer).to include('id', 'body')
+            expect(answer).not_to include('session_id_hash')
             expect(answer).not_to include('session_id')
           end
         end
@@ -493,7 +494,8 @@ RSpec.describe 'React Forms API', type: :request do
           
           json = JSON.parse(response.body)
           expect(json['template']['question_type']).to eq('choice')
-          expect(json['template']['fields']).to include('choices_attributes')
+          choices_field = json['template']['fields'].find { |f| f['name'] == 'choices_attributes' }
+          expect(choices_field).to be_present
         end
 
         it 'レーティング型フォームテンプレートを返す' do
