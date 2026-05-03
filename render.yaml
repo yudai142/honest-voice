@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: honest-voice
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    dockerCommand: bundle exec puma -b tcp://0.0.0.0:3000
+    buildTarget: production
+    region: oregon
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: RAILS_ENV
+        value: production
+      - key: SECRET_KEY_BASE
+        generateValue: true
+      - key: DATABASE_URL
+        value: sqlite3:/rails/storage/production.sqlite3
+      - key: RAILS_LOG_TO_STDOUT
+        value: "1"
+      - key: RAILS_SERVE_STATIC_FILES
+        value: "1"
+    disk:
+      name: sqlite-data
+      mountPath: /rails/storage
+      sizeGB: 1
