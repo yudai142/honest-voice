@@ -25,7 +25,7 @@ class InviteToken < ApplicationRecord
   end
 
   def valid_for_use?
-    active? && status == 'active' && !expired? && has_remaining_uses?
+    self[:active] && status == 'active' && !expired? && has_remaining_uses?
   end
 
   def mark_as_used(user = nil)

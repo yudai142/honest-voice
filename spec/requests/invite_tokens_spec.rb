@@ -53,7 +53,7 @@ RSpec.describe 'InviteTokens', type: :request do
           }
         }
 
-        expect(response).to have_http_status(:found)
+        expect(response).to have_http_status(:see_other)
         expect(response).to redirect_to("/invite/#{invite_token.token}")
       end
     end
@@ -78,6 +78,8 @@ RSpec.describe 'InviteTokens', type: :request do
       before { sign_in other_user }
 
       it '会社へ参加し、use_countを更新する' do
+        invite_token
+
         expect do
           get "/invite/#{invite_token.token}"
         end.to change(CompanyMember, :count).by(1)
