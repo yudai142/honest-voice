@@ -73,6 +73,11 @@ jobs:
       - name: Install Node dependencies
         run: npm ci
 
+      - name: Build JavaScript and CSS assets
+        run: |
+          npm run build
+          npm run css:build
+
       - name: Setup database
         env:
           RAILS_ENV: test
