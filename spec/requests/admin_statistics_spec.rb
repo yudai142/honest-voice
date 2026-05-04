@@ -7,17 +7,17 @@ RSpec.describe 'Admin Statistics', type: :request do
   
   # テキスト型質問
   let(:text_question) do
-    create(:question, :text_type, user: admin_user, status: 'published')
+    create(:question, :text_type, status: 'published')
   end
 
   # 選択肢型質問
   let(:choice_question) do
-    create(:question, :choice_type, user: admin_user, status: 'published')
+    create(:question, :choice_type, status: 'published')
   end
 
   # レーティング型質問
   let(:rating_question) do
-    create(:question, :rating_type, user: admin_user, status: 'published')
+    create(:question, :rating_type, status: 'published')
   end
 
   describe 'GET /admin/questions/:id/statistics' do

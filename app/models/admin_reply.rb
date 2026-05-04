@@ -8,5 +8,5 @@ class AdminReply < ApplicationRecord
   validates :user_id, presence: true
   validates :reply_text, presence: true
 
-  enum status: { draft: 0, published: 1, archived: 2 }
+  enum :status, { draft: 0, published: 1, archived: 2 }
 end

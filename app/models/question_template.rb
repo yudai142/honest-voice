@@ -7,7 +7,7 @@ class QuestionTemplate < ApplicationRecord
   validates :company_id, presence: true
   validates :name, presence: true, uniqueness: { scope: :company_id }
 
-  enum template_type: { monthly: 0, quarterly: 1, yearly: 2 }
+  enum :template_type, { monthly: 0, quarterly: 1, yearly: 2 }
 
   def questions_array
     questions_data.present? ? JSON.parse(questions_data) : []

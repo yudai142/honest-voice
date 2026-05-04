@@ -11,4 +11,16 @@ class User < ApplicationRecord
   has_many :created_admin_replies, class_name: 'AdminReply', foreign_key: 'user_id', dependent: :destroy
 
   validates :email, presence: true, uniqueness: true
+
+  enum :role, { member: 'member', admin: 'admin' }
+
+  validates :role, presence: true, inclusion: { in: roles.keys }
+
+  def admin?
+    role == 'admin'
+  end
+
+  def member?
+    role == 'member'
+  end
 end

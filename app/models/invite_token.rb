@@ -8,7 +8,7 @@ class InviteToken < ApplicationRecord
   validates :company_id, presence: true
   validates :token, presence: true, uniqueness: true
 
-  enum status: { active: 0, used: 1, expired: 2 }
+  enum :status, { active: 0, used: 1, expired: 2 }
 
   before_create :generate_token
   before_save :set_expires_at

@@ -5,7 +5,7 @@ RSpec.describe 'React Forms API', type: :request do
 
   let(:admin_user) { create(:user, :admin) }
   let(:member_user) { create(:user, :member) }
-  let(:question) { create(:question, user: admin_user, status: 'published') }
+  let(:question) { create(:question, status: 'published') }
 
   describe 'QuestionForm API' do
     describe 'POST /admin/questions - 質問作成' do

@@ -7,7 +7,7 @@ RSpec.describe 'Defects Fix Regression', type: :request do
   describe '管理者質問画面テンプレート' do
     before { sign_in admin_user }
 
-    let(:question) { create(:question, :published, user: admin_user) }
+    let(:question) { create(:question, :published) }
 
     it 'GET /admin/questions/new が表示できる' do
       get '/admin/questions/new'

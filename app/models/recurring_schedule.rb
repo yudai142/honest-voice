@@ -7,8 +7,8 @@ class RecurringSchedule < ApplicationRecord
   validates :company_id, presence: true
   validates :name, presence: true
 
-  enum frequency: { monthly: 0, quarterly: 1, yearly: 2 }
-  enum status: { active: 0, paused: 1, completed: 2 }
+  enum :frequency, { monthly: 0, quarterly: 1, yearly: 2 }
+  enum :status, { active: 0, paused: 1, completed: 2 }
 
   scope :active_schedules, -> { where(status: :active) }
   scope :due_today, -> { where('next_scheduled_at <= ?', Time.current) }

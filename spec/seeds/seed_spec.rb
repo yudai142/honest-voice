@@ -8,6 +8,8 @@ RSpec.describe 'Seed data' do
     Choice.delete_all
     Answer.delete_all
     AnswerToken.delete_all
+      Company.delete_all
+      CompanyMember.delete_all
     
     # Seed スクリプト読み込みと実行
     load Rails.root.join('db', 'seeds.rb')
@@ -55,9 +57,9 @@ RSpec.describe 'Seed data' do
       expect(rating_questions.exists?).to be true
     end
 
-    it 'すべての質問が admin ユーザーに属する' do
-      admin_user = User.find_by(role: :admin)
-      expect(Question.all.all? { |q| q.user_id == admin_user.id }).to be true
+    it 'すべての質問がデモ企業に属する' do
+      demo_company = Company.find_by(name: 'Honest Voice デモ企業')
+      expect(Question.all.all? { |q| q.company_id == demo_company.id }).to be true
     end
 
     it 'すべての質問が title を持つ' do

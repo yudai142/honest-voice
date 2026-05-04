@@ -9,7 +9,7 @@ class CompanyMember < ApplicationRecord
   validates :role, presence: true
   validates :user_id, uniqueness: { scope: :company_id }
 
-  enum role: { owner: 0, manager: 1, member: 2, viewer: 3 }
+  enum :role, { owner: 0, manager: 1, member: 2, viewer: 3 }
 
   def owner?
     role == 'owner'

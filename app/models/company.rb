@@ -15,7 +15,7 @@ class Company < ApplicationRecord
   validates :name, presence: true, length: { maximum: 255 }
   validates :owner_id, presence: true
 
-  enum visibility: { private: 0, public: 1 }
+  enum :visibility, { company_private: 0, company_public: 1 }
 
   after_create :add_owner_as_member
 
