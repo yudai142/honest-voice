@@ -89,11 +89,36 @@ RSpec.describe InviteToken, type: :model do
         invite_token.update(status: :active, expires_at: 1.day.ago)
         expect(invite_token.valid_for_use?).to be false
       end
+
+      it 'returns false when active is false' do
+        invite_token.update(status: :active, expires_at: 1.day.from_now, active: false)
+        expect(invite_token.valid_for_use?).to be false
+      end
+
+      it 'returns false when use_count reaches max_uses' do
+        invite_token.update(status: :active, expires_at: 1.day.from_now, max_uses: 3, use_count: 3)
+        expect(invite_token.valid_for_use?).to be false
+      end
     end
 
     describe '#mark_as_used' do
       it 'updates status to used' do
         invite_token.mark_as_used
+        expect(invite_token.status).to eq('used')
+      end
+
+      it 'increments use_count' do
+        invite_token.update(use_count: 0, max_uses: 5)
+        invite_token.mark_as_used
+        expect(invite_token.reload.use_count).to eq(1)
+      end
+
+      it 'deactivates token when use_count reaches max_uses' do
+        invite_token.update(use_count: 0, max_uses: 1, active: true)
+        invite_token.mark_as_used
+        invite_token.reload
+
+        expect(invite_token.active).to be false
         expect(invite_token.status).to eq('used')
       end
     end

@@ -5,6 +5,9 @@ FactoryBot.define do
     company
     creator { association :user }
     status { :active }
+    active { true }
+    max_uses { 1 }
+    use_count { 0 }
     expires_at { 7.days.from_now }
     used_by { nil }
     used_at { nil }

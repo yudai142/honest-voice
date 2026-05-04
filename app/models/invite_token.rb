@@ -7,6 +7,8 @@ class InviteToken < ApplicationRecord
 
   validates :company_id, presence: true
   validates :token, presence: true, uniqueness: true
+  validates :max_uses, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
+  validates :use_count, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
   enum :status, { active: 0, used: 1, expired: 2 }
 
@@ -17,15 +19,27 @@ class InviteToken < ApplicationRecord
   scope :not_expired, -> { where('expires_at > ?', Time.current) }
 
   def expired?
-    expires_at && expires_at < Time.current
+    return false unless expires_at
+
+    expires_at < Time.current
   end
 
   def valid_for_use?
-    active? && !expired?
+    self[:active] && status == 'active' && !expired? && has_remaining_uses?
   end
 
   def mark_as_used(user = nil)
-    update(status: :used, used_by: user, used_at: Time.current)
+    self.use_count ||= 0
+    self.use_count += 1
+    self.used_by = user
+    self.used_at = Time.current
+
+    if max_uses.present? && use_count >= max_uses
+      self.active = false
+      self.status = :used
+    end
+
+    save!
   end
 
   private
@@ -36,5 +50,11 @@ class InviteToken < ApplicationRecord
 
   def set_expires_at
     self.expires_at ||= 7.days.from_now
+  end
+
+  def has_remaining_uses?
+    return true if max_uses.blank?
+
+    use_count.to_i < max_uses
   end
 end
