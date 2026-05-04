@@ -1,7 +1,9 @@
 class Answer < ApplicationRecord
   belongs_to :question, optional: false
+  belongs_to :company, optional: true
   belongs_to :user, optional: true
   belongs_to :choice, optional: true
+  has_many :admin_replies, dependent: :destroy
 
   validates :session_id, presence: true
   validate :validate_body_or_choice
