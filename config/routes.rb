@@ -36,12 +36,16 @@ Rails.application.routes.draw do
     resources :questions do
       resources :choices, only: [:create, :update, :destroy]
       get 'statistics', to: 'statistics#show', as: :statistics
+      resources :answers, only: [] do
+        resources :admin_replies, only: [:index, :create, :destroy]
+      end
     end
   end
 
   # Member namespace
   namespace :member, path: 'member' do
     get 'dashboard', to: 'dashboard#index', as: :dashboard
+    resources :questions, only: [:index, :show]
     resources :answers, only: [:index]
   end
 
