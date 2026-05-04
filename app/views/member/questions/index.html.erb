@@ -1,0 +1,70 @@
+<div class="container mx-auto py-8">
+  <div class="mb-4">
+    <%= link_to '← ダッシュボードに戻る', member_dashboard_path, class: 'link link-primary text-sm' %>
+  </div>
+
+  <h1 class="text-3xl font-bold mb-6">質問一覧</h1>
+
+  <!-- タブ -->
+  <div role="tablist" class="tabs tabs-bordered mb-6">
+    <%= link_to '未回答', member_questions_path(tab: 'unanswered'),
+        role: 'tab',
+        class: "tab #{@tab == 'unanswered' || @tab.nil? ? 'tab-active' : ''}" %>
+    <%= link_to '回答済み', member_questions_path(tab: 'answered'),
+        role: 'tab',
+        class: "tab #{@tab == 'answered' ? 'tab-active' : ''}" %>
+    <%= link_to 'クローズ済み', member_questions_path(tab: 'closed'),
+        role: 'tab',
+        class: "tab #{@tab == 'closed' ? 'tab-active' : ''}" %>
+  </div>
+
+  <% if @questions.any? %>
+    <div class="space-y-4">
+      <% @questions.each do |question| %>
+        <div class="card bg-base-100 shadow border border-base-300">
+          <div class="card-body">
+            <h2 class="card-title text-lg"><%= question.title %></h2>
+            <p class="text-sm text-base-content/70 line-clamp-2"><%= question.body %></p>
+            <div class="card-actions justify-between items-center mt-2">
+              <div class="flex gap-2">
+                <span class="badge badge-outline">
+                  <%= case question.question_type
+                      when 'text' then 'テキスト'
+                      when 'choice' then '選択肢'
+                      when 'rating' then '評価'
+                      end %>
+                </span>
+                <% if question.closed? %>
+                  <span class="badge badge-neutral">クローズ済み</span>
+                <% end %>
+              </div>
+              <% if @tab == 'answered' %>
+                <span class="badge badge-success">回答済み</span>
+              <% elsif @tab == 'closed' %>
+                <span class="text-sm text-base-content/50">回答期間終了</span>
+              <% else %>
+                <%= link_to '回答する', member_question_path(question), class: 'btn btn-sm btn-primary' %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="alert alert-info">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <span>
+        <% case @tab
+           when 'answered' %>
+          回答済みの質問はありません。
+        <% when 'closed' %>
+          クローズ済みの質問はありません。
+        <% else %>
+          現在回答可能な質問はありません。
+        <% end %>
+      </span>
+    </div>
+  <% end %>
+</div>
