@@ -29,6 +29,7 @@ gem "whenever", require: false
 # PDF 生成
 gem "prawn"
 gem "prawn-table"
+gem "matrix" # Prawn の依存関係
 
 # AI API
 gem "anthropic"

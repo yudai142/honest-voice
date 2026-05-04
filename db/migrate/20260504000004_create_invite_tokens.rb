@@ -8,7 +8,7 @@ class CreateInviteTokens < ActiveRecord::Migration[8.1]
       t.string :token, null: false
       t.integer :status, default: 0 # 0: active, 1: used, 2: expired
       t.datetime :expires_at
-      t.references :used_by, foreign_key: { to_table: :users }, optional: true
+      t.integer :used_by_id
       t.datetime :used_at
 
       t.timestamps
@@ -16,5 +16,6 @@ class CreateInviteTokens < ActiveRecord::Migration[8.1]
 
     add_index :invite_tokens, :token, unique: true
     add_index :invite_tokens, [:company_id, :status]
+    add_foreign_key :invite_tokens, :users, column: :used_by_id
   end
 end

@@ -14,6 +14,5 @@ class CreateCompanies < ActiveRecord::Migration[8.1]
     end
 
     add_index :companies, :name
-    add_index :companies, :owner_id
   end
 end
