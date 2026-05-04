@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_04_000014) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_04_000015) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -125,6 +125,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_04_000014) do
     t.text "keywords"
     t.bigint "question_id", null: false
     t.text "sentiment_summary"
+    t.integer "status", default: 0, null: false
     t.integer "total_responses", default: 0
     t.datetime "updated_at", null: false
     t.index ["company_id"], name: "index_question_analyses_on_company_id"

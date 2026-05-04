@@ -27,4 +27,8 @@ class Question < ApplicationRecord
   def closed?
     status == 'closed'
   end
+
+  def eligible_for_analysis?
+    answers.count >= 5
+  end
 end

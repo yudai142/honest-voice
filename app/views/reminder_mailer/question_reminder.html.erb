@@ -1,0 +1,9 @@
+<p><%= @user.name.presence || @user.email %> 様</p>
+
+<p>「<strong><%= @question.title %></strong>」の回答締切まであと<%= @days_before_deadline %>日です。</p>
+
+<p><%= simple_format(@question.body) %></p>
+
+<p>回答済みの方はご無視ください。</p>
+
+<p>Honest Voice</p>
