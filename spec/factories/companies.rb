@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :company do
     sequence(:name) { |n| "Company #{n}" }
     owner_id { create(:user).id }
-    visibility { :private }
+    visibility { :company_private }
     description { Faker::Lorem.sentence }
 
     trait :with_members do
@@ -13,8 +13,8 @@ FactoryBot.define do
       end
     end
 
-    trait :public do
-      visibility { :public }
+    trait :company_public do
+      visibility { :company_public }
     end
   end
 end

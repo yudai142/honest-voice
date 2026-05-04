@@ -4,7 +4,6 @@ FactoryBot.define do
   factory :invite_token do
     company
     creator { association :user }
-    token { SecureRandom.hex(32) }
     status { :active }
     expires_at { 7.days.from_now }
     used_by { nil }
