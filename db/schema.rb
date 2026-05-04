@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_04_000013) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_04_000014) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -99,13 +99,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_04_000013) do
   end
 
   create_table "invite_tokens", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
     t.bigint "company_id", null: false
     t.datetime "created_at", null: false
     t.bigint "creator_id"
     t.datetime "expires_at"
+    t.integer "max_uses", default: 1, null: false
     t.integer "status", default: 0
     t.string "token", null: false
     t.datetime "updated_at", null: false
+    t.integer "use_count", default: 0, null: false
     t.datetime "used_at"
     t.integer "used_by_id"
     t.index ["company_id", "status"], name: "index_invite_tokens_on_company_id_and_status"
