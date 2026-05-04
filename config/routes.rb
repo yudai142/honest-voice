@@ -12,6 +12,8 @@ Rails.application.routes.draw do
     resources :answers, only: [:create, :index]
   end
 
+  get 'invite/:token', to: 'invite_tokens#join', as: :join_invite
+
   # Validation
   post 'validate-answer', to: 'validation#validate_answer'
 
@@ -20,6 +22,17 @@ Rails.application.routes.draw do
     get 'dashboard', to: 'dashboard#index', as: :dashboard
     get 'form-template', to: 'forms#template', as: :form_template
     post 'validate-question', to: 'forms#validate_question'
+
+    resources :companies, only: [] do
+      resources :invite_tokens, only: [:index, :create, :destroy] do
+        member do
+          patch :deactivate
+        end
+      end
+
+      resources :company_members, only: [:index, :update, :destroy]
+    end
+
     resources :questions do
       resources :choices, only: [:create, :update, :destroy]
       get 'statistics', to: 'statistics#show', as: :statistics
