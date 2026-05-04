@@ -1,17 +1,24 @@
 # Seed データ・初期化スクリプト
 
-# 既存データをクリア
-User.delete_all
-Question.delete_all
-Choice.delete_all
-Answer.delete_all
+# 既存データをクリア（外部キー制約を考慮した削除順序）
+AdminReply.delete_all
 AnswerToken.delete_all
-Company.delete_all
+Answer.delete_all
+Choice.delete_all
+QuestionAnalysis.delete_all
+QuestionTarget.delete_all
+RecurringSchedule.delete_all
+Question.delete_all
+InviteToken.delete_all
 CompanyMember.delete_all
+Company.delete_all
+User.delete_all
 
 # IDカウンターをリセット
 if ActiveRecord::Base.connection.adapter_name.downcase.include?('postgres')
   ActiveRecord::Base.connection.reset_pk_sequence!(:users)
+  ActiveRecord::Base.connection.reset_pk_sequence!(:companies)
+  ActiveRecord::Base.connection.reset_pk_sequence!(:company_members)
   ActiveRecord::Base.connection.reset_pk_sequence!(:questions)
   ActiveRecord::Base.connection.reset_pk_sequence!(:choices)
   ActiveRecord::Base.connection.reset_pk_sequence!(:answers)
