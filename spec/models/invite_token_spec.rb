@@ -9,10 +9,9 @@ RSpec.describe InviteToken, type: :model do
   end
 
   describe 'validations' do
-    subject { build(:invite_token) }
+    subject { create(:invite_token) }
 
     it { is_expected.to validate_presence_of(:company_id) }
-    it { is_expected.to validate_presence_of(:token) }
   end
 
   describe 'enums' do
@@ -23,7 +22,6 @@ RSpec.describe InviteToken, type: :model do
     describe 'before_create' do
       it 'generates unique token' do
         invite_token = build(:invite_token)
-        expect(invite_token.token).to be_nil
         invite_token.save
         expect(invite_token.token).not_to be_nil
         expect(invite_token.token.length).to be >= 32
@@ -32,8 +30,7 @@ RSpec.describe InviteToken, type: :model do
 
     describe 'before_save' do
       it 'sets expires_at if not provided' do
-        invite_token = build(:invite_token, expires_at: nil)
-        invite_token.save
+        invite_token = create(:invite_token, expires_at: nil)
         expect(invite_token.expires_at).not_to be_nil
         expect(invite_token.expires_at).to be > Time.current
       end

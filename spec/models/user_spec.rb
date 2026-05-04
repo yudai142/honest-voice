@@ -2,8 +2,10 @@ require 'rails_helper'
 
 describe User, type: :model do
   describe 'associations' do
-    it { is_expected.to have_many(:questions).dependent(:destroy) }
     it { is_expected.to have_many(:answers).dependent(:destroy) }
+    it { is_expected.to have_many(:company_members).dependent(:destroy) }
+    it { is_expected.to have_many(:companies).through(:company_members) }
+    it { is_expected.to have_many(:owned_companies).dependent(:destroy) }
   end
 
   describe 'validations' do

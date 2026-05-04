@@ -6,17 +6,15 @@ describe AnswerToken, type: :model do
   end
 
   describe 'validations' do
-    subject { build(:answer_token) }
+    subject { create(:answer_token) }
 
     it { is_expected.to validate_presence_of(:token) }
     it { is_expected.to validate_uniqueness_of(:token) }
   end
 
   describe 'token generation' do
-    let(:answer_token) { build(:answer_token) }
-
     it 'generates a token on create' do
-      answer_token.save!
+      answer_token = create(:answer_token)
       expect(answer_token.token).to be_present
       expect(answer_token.token.length).to be >= 32
     end

@@ -34,7 +34,7 @@ RSpec.describe Company, type: :model do
   end
 
   describe 'enums' do
-    it { is_expected.to define_enum_for(:visibility).with_values(private: 0, public: 1) }
+    it { is_expected.to define_enum_for(:visibility).with_values(company_private: 0, company_public: 1) }
   end
 
   describe 'callbacks' do

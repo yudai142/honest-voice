@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe Question, type: :model do
   describe 'associations' do
-    it { is_expected.to belong_to(:user).optional(false) }
+    it { is_expected.to belong_to(:company).optional(false) }
     it { is_expected.to have_many(:choices).dependent(:destroy) }
     it { is_expected.to have_many(:answers).dependent(:destroy) }
   end
