@@ -36,10 +36,11 @@ RSpec.describe 'Security', type: :request do
 
   describe 'XSS対策' do
     it '管理画面で質問本文をエスケープして表示する' do
+      admin_company = create(:company, owner_id: admin_user.id)
       sign_in admin_user
       question = create(
         :question,
-        user: admin_user,
+        company: admin_company,
         body: '<script>alert("xss")</script>'
       )
 

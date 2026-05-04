@@ -3,7 +3,8 @@ require 'rails_helper'
 RSpec.describe 'Admin::Questions', type: :request do
   let(:admin_user) { create(:user, :admin) }
   let(:member_user) { create(:user, :member) }
-  let(:question) { create(:question) }
+  let(:company) { create(:company, owner_id: admin_user.id) }
+  let(:question) { create(:question, company: company) }
   let(:choice) { create(:choice, question: question) }
 
   describe 'Access Control' do
@@ -35,8 +36,9 @@ RSpec.describe 'Admin::Questions', type: :request do
 
   describe 'GET /admin/questions' do
     before do
+      company  # admin_user の company を作成しておく
       sign_in admin_user
-      create_list(:question, 5)
+      create_list(:question, 5, company: company)
     end
 
     it '質問一覧を表示する' do
@@ -86,7 +88,10 @@ RSpec.describe 'Admin::Questions', type: :request do
   end
 
   describe 'POST /admin/questions' do
-    before { sign_in admin_user }
+    before do
+      company  # admin_user の company を作成しておく
+      sign_in admin_user
+    end
 
     context '正常なパラメータ' do
       let(:valid_params) do
