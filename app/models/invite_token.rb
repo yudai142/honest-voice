@@ -10,7 +10,7 @@ class InviteToken < ApplicationRecord
 
   enum :status, { active: 0, used: 1, expired: 2 }
 
-  before_create :generate_token
+  before_validation :generate_token, on: :create
   before_save :set_expires_at
 
   scope :active, -> { where(status: :active) }

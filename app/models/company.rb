@@ -19,6 +19,12 @@ class Company < ApplicationRecord
 
   after_create :add_owner_as_member
 
+  def add_member(user, role = :member)
+    company_members.find_or_create_by(user: user) do |member|
+      member.role = role
+    end
+  end
+
   private
 
   def add_owner_as_member

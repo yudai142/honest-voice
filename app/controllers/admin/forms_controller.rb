@@ -14,7 +14,7 @@ module Admin
     # POST /admin/validate-question
     def validate_question
       @question = Question.new(question_params)
-      @question.user = current_user
+      @question.company = current_user.owned_companies.first || current_user.companies.first
       @question.status ||= 'draft'
       
       if @question.valid?

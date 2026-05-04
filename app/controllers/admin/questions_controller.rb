@@ -5,7 +5,8 @@ class Admin::QuestionsController < ApplicationController
 
   # GET /admin/questions
   def index
-    all_questions = Question.order(created_at: :desc)
+    current_company = current_user.owned_companies.first || current_user.companies.first
+    all_questions = current_company ? Question.where(company: current_company).order(created_at: :desc) : Question.none
     page = (params[:page] || 1).to_i
     per_page = (params[:per_page] || 10).to_i
     offset = (page - 1) * per_page
@@ -48,7 +49,7 @@ class Admin::QuestionsController < ApplicationController
   # POST /admin/questions
   def create
     @question = Question.new(question_params)
-    @question.user = current_user
+    @question.company = current_user.owned_companies.first || current_user.companies.first
     @question.status ||= 'draft'
 
     if @question.save
