@@ -1,0 +1,10 @@
+<%= @user.name.presence || @user.email %> 様
+
+「<%= @question.title %>」の回答締切まであと<%= @days_before_deadline %>日です。
+
+質問内容:
+<%= @question.body %>
+
+回答済みの方はご無視ください。
+
+Honest Voice
