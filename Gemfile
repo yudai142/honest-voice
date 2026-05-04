@@ -18,6 +18,21 @@ gem "rack-cors"
 # 認証フレームワーク
 gem "devise"
 
+# 権限・認可管理
+gem "pundit"
+
+# バックグラウンドジョブ・スケジューリング
+gem "sidekiq"
+gem "redis", ">= 4.0.1"
+gem "whenever", require: false
+
+# PDF 生成
+gem "prawn"
+gem "prawn-table"
+
+# AI API
+gem "anthropic"
+
 # チャート・統計表示
 gem "chartkick"
 gem "chart-js-rails"
