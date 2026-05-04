@@ -5,12 +5,16 @@ RSpec.describe 'React Forms API', type: :request do
 
   let(:admin_user) { create(:user, :admin) }
   let(:member_user) { create(:user, :member) }
-  let(:question) { create(:question, user: admin_user, status: 'published') }
+  let(:admin_company) { create(:company, owner_id: admin_user.id) }
+  let(:question) { create(:question, status: 'published') }
 
   describe 'QuestionForm API' do
     describe 'POST /admin/questions - 質問作成' do
       context 'admin ユーザー' do
-        before { sign_in admin_user }
+        before do
+          admin_company  # admin_user の company を作成
+          sign_in admin_user
+        end
 
         it '完全なパラメータで質問を作成する' do
           params = {
@@ -511,7 +515,10 @@ RSpec.describe 'React Forms API', type: :request do
   describe 'フォームバリデーション API' do
     describe 'POST /admin/validate-question - 質問バリデーション' do
       context 'admin ユーザー' do
-        before { sign_in admin_user }
+        before do
+          admin_company  # admin_user の company を作成
+          sign_in admin_user
+        end
 
         it '有効な質問データを検証する' do
           params = {

@@ -3,6 +3,8 @@ FactoryBot.define do
     email { Faker::Internet.email }
     password { 'password123' }
     password_confirmation { 'password123' }
+    sequence(:name) { |n| "User #{n}" }
+    notification_enabled { true }
     role { 'member' }
 
     trait :admin do

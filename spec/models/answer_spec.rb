@@ -36,21 +36,17 @@ describe Answer, type: :model do
   end
 
   describe 'session_id hashing' do
-    let(:answer) { build(:answer, session_id: 'test-session-123') }
+    let(:answer) { create(:answer, session_id: 'test-session-123') }
 
     it 'hashes session_id before save' do
-      answer.save!
       expect(answer.session_id_hash).not_to be_nil
       expect(answer.session_id_hash).not_to eq('test-session-123')
     end
 
     it 'creates consistent hash for same session_id' do
       session_id = 'test-session-456'
-      answer1 = build(:answer, session_id: session_id)
-      answer2 = build(:answer, session_id: session_id)
-
-      answer1.save!
-      answer2.save!
+      answer1 = create(:answer, session_id: session_id)
+      answer2 = create(:answer, session_id: session_id)
 
       expect(answer1.session_id_hash).to eq(answer2.session_id_hash)
     end

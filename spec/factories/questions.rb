@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :question do
-    user
+    company
     title { Faker::Lorem.sentence(word_count: 5) }
     body { Faker::Lorem.paragraph(sentence_count: 3) }
     question_type { 'text' }

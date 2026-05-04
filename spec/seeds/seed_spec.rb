@@ -2,13 +2,20 @@ require 'rails_helper'
 
 RSpec.describe 'Seed data' do
   before do
-    # データベースをクリアしてから seed を実行
-    User.delete_all
-    Question.delete_all
-    Choice.delete_all
-    Answer.delete_all
+    # データベースをクリアしてから seed を実行（外部キー制約を考慮した削除順序）
+    AdminReply.delete_all
     AnswerToken.delete_all
-    
+    Answer.delete_all
+    Choice.delete_all
+    QuestionAnalysis.delete_all rescue nil
+    QuestionTarget.delete_all rescue nil
+    RecurringSchedule.delete_all rescue nil
+    Question.delete_all
+    InviteToken.delete_all rescue nil
+    CompanyMember.delete_all rescue nil
+    Company.delete_all rescue nil
+    User.delete_all
+
     # Seed スクリプト読み込みと実行
     load Rails.root.join('db', 'seeds.rb')
   end
@@ -55,9 +62,9 @@ RSpec.describe 'Seed data' do
       expect(rating_questions.exists?).to be true
     end
 
-    it 'すべての質問が admin ユーザーに属する' do
-      admin_user = User.find_by(role: :admin)
-      expect(Question.all.all? { |q| q.user_id == admin_user.id }).to be true
+    it 'すべての質問がデモ企業に属する' do
+      demo_company = Company.find_by(name: 'Honest Voice デモ企業')
+      expect(Question.all.all? { |q| q.company_id == demo_company.id }).to be true
     end
 
     it 'すべての質問が title を持つ' do
