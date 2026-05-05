@@ -79,8 +79,8 @@ end
   end
 
   describe 'QuestionTemplates' do
-    it 'テンプレートが8件作成される' do
-      expect(QuestionTemplate.count).to eq(8)
+    it 'テンプレートが各企業に8件ずつ作成される（全16件）' do
+      expect(QuestionTemplate.count).to eq(16)
     end
 
     it 'すべてのテンプレートが会社に属する' do
