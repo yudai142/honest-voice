@@ -1,0 +1,26 @@
+<div class="container mx-auto p-6">
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold">定点観測スケジュール</h1>
+    <p class="text-base-content/60 mt-1">定期的なフィードバック収集スケジュールを管理します。</p>
+  </div>
+
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <div id="recurring-schedules-root">
+        <!-- RecurringScheduleForm React component will be mounted here -->
+        <div class="flex justify-center p-10">
+          <span class="loading loading-spinner loading-lg text-primary"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const mountRecurringScheduleForm = window.__mountRecurringScheduleForm;
+    if (typeof mountRecurringScheduleForm === 'function') {
+      mountRecurringScheduleForm('recurring-schedules-root');
+    }
+  });
+</script>

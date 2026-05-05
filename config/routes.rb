@@ -39,6 +39,17 @@ Rails.application.routes.draw do
       resources :answers, only: [] do
         resources :admin_replies, only: [:index, :create, :destroy]
       end
+      member do
+        get 'export/pdf', to: 'exports#pdf', as: :export_pdf
+        get 'export/csv', to: 'exports#csv', as: :export_csv
+      end
+    end
+
+    resources :recurring_schedules, only: [:index, :create, :update, :destroy] do
+      member do
+        patch :pause
+        patch :resume
+      end
     end
   end
 
