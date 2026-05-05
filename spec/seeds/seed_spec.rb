@@ -59,8 +59,8 @@ end
   end
 
   describe 'Departments' do
-    it '部署が4種類作成される' do
-      expect(Department.count).to eq(4)
+    it '部署が8件作成される（各企業に4種類）' do
+      expect(Department.count).to eq(8)
     end
 
     it 'すべての部署が会社に属する' do
