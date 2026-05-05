@@ -4,7 +4,7 @@
   "description": "完全匿名フィードバック収集プラットフォーム",
   "type": "module",
   "scripts": {
-    "build": "esbuild app/javascript/index.tsx --outfile=app/assets/builds/index.js --bundle --minify",
+    "build": "npm run css:build && esbuild app/javascript/index.tsx --outfile=app/assets/builds/index.js --bundle --minify",
     "dev": "esbuild app/javascript/index.tsx --outfile=app/assets/builds/index.js --bundle --watch=forever",
     "css:build": "tailwindcss -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --minify",
     "css:watch": "tailwindcss -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --watch",
