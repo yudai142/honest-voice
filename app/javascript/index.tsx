@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import RecurringScheduleForm from './components/RecurringScheduleForm';
 
 const App: React.FC = () => {
   return (
@@ -19,3 +20,11 @@ if (rootElement) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(<App />);
 }
+
+// 定点観測スケジュール管理ページへのマウント
+(window as any).__mountRecurringScheduleForm = (elementId: string) => {
+  const el = document.getElementById(elementId);
+  if (!el) return;
+  const root = ReactDOM.createRoot(el);
+  root.render(<RecurringScheduleForm />);
+};
