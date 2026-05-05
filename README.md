@@ -355,3 +355,172 @@ Honest Voice は、以下の 3 つの要素を組み合わせることで、そ�
 | **テスト** | RSpec + FactoryBot |
 
 ---
+
+## 11. Seed データの総合チェック確認
+
+### Issue #32: Phase 6 Seed データ作成と総合動作確認
+
+このセクションでは、`rails db:seed` でテストデータを投入した後、システムが正常に動作することを確認するための手動チェック項目を列挙しています。
+
+#### 11-1. Seed データ投入前の確認
+
+- [ ] データベースが初期化されている（既存データがクリアされている）
+- [ ] `rails db:migrate` が成功している
+
+#### 11-2. Seed データ投入の実行
+
+```bash
+rails db:seed
+```
+
+**期待される出力**:
+```
+=== Seed データ生成を開始 ===
+✓ 管理者ユーザー作成: admin@honest-voice.local
+✓ 従業員ユーザー作成: 3名
+✓ 会社グループ作成: Honest Voice デモ企業
+✓ 会社グループ作成: テクノロジー企業グループ
+✓ 従業員3名を両企業に追加
+✓ 部署作成: 各企業に 4種類（全8件）
+✓ 質問テンプレート作成: 16件（各企業に 8件）
+✓ テキスト型質問作成: ...
+✓ 選択肢型質問作成: ...
+✓ レーティング型質問作成: ...
+
+✅ Seed データ生成完了！
+  - ユーザー数: 4名（管理者: 1, 従業員: 3）
+  - 企業数: 2社
+  - 部署数: 8個（各企業4種類）
+  - 質問テンプレート数: 16件
+    - 月次: 4件
+    - 四半期: 4件
+    - 年間: 4件
+  - 質問数: 4件
+    - テキスト型: 2件
+    - 選択肢型: 1件
+    - レーティング型: 1件
+  - 選択肢数: 5個
+```
+
+#### 11-3. データ量の確認
+
+Seed 実行後、Rails Console で以下を実行して確認:
+
+```bash
+rails console
+```
+
+##### ユーザー確認
+```ruby
+User.count                          # => 4
+User.where(role: :admin).count      # => 1
+User.where(role: :member).count     # => 3
+User.all.map(&:email)              # => 管理者1名、従業員3名のメール
+```
+
+##### 企業確認
+```ruby
+Company.count                       # => 2
+Company.pluck(:name)                # => ['Honest Voice デモ企業', 'テクノロジー企業グループ']
+```
+
+##### 部署確認
+```ruby
+Department.count                    # => 8
+Company.first.departments.count     # => 4
+Company.last.departments.count      # => 4
+Department.pluck(:name).uniq        # => ['営業部', '企画部', '開発部', '支援部']
+```
+
+##### 質問テンプレート確認
+```ruby
+QuestionTemplate.count              # => 16
+QuestionTemplate.where(template_type: :monthly).count    # => 4
+QuestionTemplate.where(template_type: :quarterly).count  # => 4
+QuestionTemplate.where(template_type: :yearly).count     # => 4
+```
+
+##### 質問確認
+```ruby
+Question.count                      # => 4
+Question.where(question_type: :text).count          # => 2
+Question.where(question_type: :choice).count        # => 1
+Question.where(question_type: :rating).count        # => 1
+Question.where(status: :published).count            # => 4
+```
+
+##### 選択肢確認
+```ruby
+Choice.count                        # => 5
+Question.find_by(title: /職場環境/).choices.count   # => 5
+```
+
+#### 11-4. 主要画面の動作確認
+
+##### ログイン画面
+- [ ] ログインページが表示される
+- [ ] 以下のメールアドレスでログインが成功する:
+  - `admin@honest-voice.local` / `HonestVoice123!` (管理者)
+  - `member1@honest-voice.local` / `HonestVoice123!` (従業員)
+
+##### ダッシュボード
+- [ ] ログイン後、ダッシュボードが表示される
+- [ ] 管理者: 複数企業・複数質問テンプレートが表示される
+- [ ] 従業員: 参加している企業の質問が表示される
+
+##### 企業管理画面
+- [ ] 2つの企業が一覧表示される
+- [ ] 各企業の詳細画面で、4つの部署が表示される
+- [ ] 各企業の従業員3名がメンバーリストに表示される
+
+##### 質問管理画面
+- [ ] 4つのサンプル質問が一覧表示される
+- [ ] 各質問の詳細が正しく表示される（title, body, type, deadline など）
+- [ ] 選択肢型質問に5つの選択肢が表示される
+
+##### 質問テンプレート管理画面（Issue #31）
+- [ ] 16個のテンプレートが一覧表示される（企業ごと8件）
+- [ ] テンプレートタイプ（月次・四半期・年間）が正しく表示される
+- [ ] 各テンプレートのクエスチョンデータが正しく JSON で保存されている
+
+##### 回答画面
+- [ ] 従業員でログインして、公開質問への回答が可能
+- [ ] テキスト・選択肢・レーティングの3タイプすべてで回答ができる
+
+##### 統計表示画面
+- [ ] 回答後、統計グラフが表示される
+- [ ] レーティング型質問でグラフ表示が正しい
+
+#### 11-5. 回帰不具合の確認
+
+##### 匿名性の確認
+- [ ] 回答後、「誰が答えたか」がシステムに記録されていない
+- [ ] Admin が Answer レコードを見ても、user_id が nil または hash 値となっている
+
+##### データ整合性の確認
+- [ ] 外部キー制約エラーが発生していない
+- [ ] Question と Company の関連が正しい
+- [ ] CompanyMember と User の関連が正しい
+
+##### パフォーマンス確認
+- [ ] ページ読み込みが 3 秒以内
+- [ ] データベースクエリが N+1 問題を起こしていない（Rails Log 確認）
+
+#### 11-6. テスト実行の確認
+
+```bash
+bundle exec rspec spec/seeds/seed_spec.rb
+```
+
+**期待される結果**:
+- [ ] すべてのテストが PASS する
+- [ ] Users, Companies, Departments, QuestionTemplates, Questions, Choices のテストが成功
+
+#### 11-7. チェックリスト完了後の処理
+
+- [ ] 問題がない場合: PR を作成し、レビュー対象に上げる
+- [ ] 問題が発生した場合: 以下を実施:
+  1. ログを確認して原因を特定
+  2. 根本原因に基づいて修正
+  3. Seed スクリプトとテストコードの矛盾がないか確認
+  4. 再度 Seed を実行して動作確認
