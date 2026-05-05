@@ -3,9 +3,11 @@
 class RecurringSchedule < ApplicationRecord
   belongs_to :company
   belongs_to :question, optional: true
+  belongs_to :question_template, optional: true
 
   validates :company_id, presence: true
   validates :name, presence: true
+  validates :target_scope, presence: true, inclusion: { in: %w[all department] }
 
   enum :frequency, { monthly: 0, quarterly: 1, yearly: 2 }
   enum :status, { active: 0, paused: 1, completed: 2 }
