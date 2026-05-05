@@ -10,6 +10,8 @@ QuestionTarget.delete_all
 RecurringSchedule.delete_all
 Question.delete_all
 InviteToken.delete_all
+Department.delete_all
+QuestionTemplate.delete_all
 CompanyMember.delete_all
 Company.delete_all
 User.delete_all
@@ -19,6 +21,8 @@ if ActiveRecord::Base.connection.adapter_name.downcase.include?('postgres')
   ActiveRecord::Base.connection.reset_pk_sequence!(:users)
   ActiveRecord::Base.connection.reset_pk_sequence!(:companies)
   ActiveRecord::Base.connection.reset_pk_sequence!(:company_members)
+  ActiveRecord::Base.connection.reset_pk_sequence!(:departments)
+  ActiveRecord::Base.connection.reset_pk_sequence!(:question_templates)
   ActiveRecord::Base.connection.reset_pk_sequence!(:questions)
   ActiveRecord::Base.connection.reset_pk_sequence!(:choices)
   ActiveRecord::Base.connection.reset_pk_sequence!(:answers)
@@ -58,25 +62,99 @@ end
 puts "✓ 従業員ユーザー作成: #{members.count}名"
 
 # ==========================================
-# 3. サンプル質問作成
+# 3. 会社グループ作成（2社）
 # ==========================================
+companies = []
 
-# ==========================================
-# 3. デモ企業作成
-# ==========================================
-demo_company = Company.create!(
+company1 = Company.create!(
   name: 'Honest Voice デモ企業',
   description: 'フィードバック収集プラットフォームのデモ企業',
   owner_id: admin.id,
   visibility: :company_private
 )
-puts "✓ デモ企業作成: #{demo_company.name}"
+companies << company1
+puts "✓ 会社グループ作成: #{company1.name}"
+
+company2 = Company.create!(
+  name: 'テクノロジー企業グループ',
+  description: '技術系の企業グループ向けデモ',
+  owner_id: admin.id,
+  visibility: :company_private
+)
+companies << company2
+puts "✓ 会社グループ作成: #{company2.name}"
 
 # メンバーを企業に追加
 members.each do |member|
-  demo_company.company_members.create!(user_id: member.id, role: :member)
+  company1.company_members.create!(user_id: member.id, role: :member)
+  company2.company_members.create!(user_id: member.id, role: :member)
 end
-puts "✓ 従業員3名を企業に追加"
+puts "✓ 従業員3名を両企業に追加"
+
+# ==========================================
+# 4. 部署作成（4種、各企業で重複）
+# ==========================================
+department_names = ['営業部', '企画部', '開発部', '支援部']
+
+companies.each do |company|
+  department_names.each do |dept_name|
+    Department.create!(
+      company_id: company.id,
+      name: dept_name
+    )
+  end
+end
+puts "✓ 部署作成: 各企業に #{department_names.count}種類（全#{Department.count}件）"
+
+# ==========================================
+# 5. 質問テンプレート作成（8件）
+# ==========================================
+template_configs = [
+  { name: '月次フィードバック（総合）', type: :monthly, questions: [
+    { title: '今月の総括', body: '今月の業務全体についての評価をお願いします' },
+    { title: 'チーム協力度', body: 'チーム内の協力度をお答えください' }
+  ]},
+  { name: '月次フィードバック（部門別）', type: :monthly, questions: [
+    { title: '部門の成果', body: '部門の今月の成果について教えてください' }
+  ]},
+  { name: '四半期目標進捗確認', type: :quarterly, questions: [
+    { title: '進捗率', body: '四半期目標の進捗率をお答えください' },
+    { title: '課題と対応', body: '現在の課題と対応策をお教えください' }
+  ]},
+  { name: '四半期評価アンケート', type: :quarterly, questions: [
+    { title: '自己評価', body: '四半期間の自己評価をお願いします' }
+  ]},
+  { name: '年間成長度確認', type: :yearly, questions: [
+    { title: '年間成長', body: '1年間の成長について教えてください' },
+    { title: '来年への抱負', body: '来年への抱負やビジョンをお聞かせください' }
+  ]},
+  { name: '年間総括アンケート', type: :yearly, questions: [
+    { title: '年間評価', body: '1年間の業務評価をお答えください' }
+  ]},
+  { name: '組織風土調査', type: :quarterly, questions: [
+    { title: '職場の雰囲気', body: '職場の雰囲気についてお答えください' }
+  ]},
+  { name: '顧客満足度調査', type: :monthly, questions: [
+    { title: '顧客対応品質', body: '顧客への対応品質について教えてください' }
+  ]}
+]
+
+template_count = 0
+companies.each do |company|
+  template_configs.each do |config|
+    template = QuestionTemplate.create!(
+      company_id: company.id,
+      name: config[:name],
+      template_type: config[:type],
+      questions_data: config[:questions].to_json
+    )
+    template_count += 1
+  end
+end
+puts "✓ 質問テンプレート作成: #{template_count}件（各企業に #{template_configs.count}件）"
+
+# デモ企業の別名定義
+demo_company = company1
 
 # ==========================================
 # 4. サンプル質問作成
@@ -140,7 +218,12 @@ puts "✓ テキスト型質問作成: #{q4.title}"
 # ==========================================
 puts "\n✅ Seed データ生成完了！"
 puts "  - ユーザー数: #{User.count}名（管理者: 1, 従業員: 3）"
-puts "  - 企業数: #{Company.count}件"
+puts "  - 企業数: #{Company.count}社"
+puts "  - 部署数: #{Department.count}個（各企業4種類）"
+puts "  - 質問テンプレート数: #{QuestionTemplate.count}件"
+puts "    - 月次: #{QuestionTemplate.where(template_type: :monthly).count}件"
+puts "    - 四半期: #{QuestionTemplate.where(template_type: :quarterly).count}件"
+puts "    - 年間: #{QuestionTemplate.where(template_type: :yearly).count}件"
 puts "  - 質問数: #{Question.count}件"
 puts "    - テキスト型: #{Question.where(question_type: :text).count}件"
 puts "    - 選択肢型: #{Question.where(question_type: :choice).count}件"
