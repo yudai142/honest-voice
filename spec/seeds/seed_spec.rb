@@ -12,13 +12,15 @@ RSpec.describe 'Seed data' do
     RecurringSchedule.delete_all rescue nil
     Question.delete_all
     InviteToken.delete_all rescue nil
+    Department.delete_all rescue nil
     CompanyMember.delete_all rescue nil
+    QuestionTemplate.delete_all rescue nil
     Company.delete_all rescue nil
     User.delete_all
 
     # Seed スクリプト読み込みと実行
     load Rails.root.join('db', 'seeds.rb')
-  end
+end
 
   describe 'Users' do
     it '管理者ユーザーが1名作成される' do
@@ -39,6 +41,62 @@ RSpec.describe 'Seed data' do
 
     it 'ユーザー数が4名である' do
       expect(User.count).to eq(4)
+    end
+  end
+
+  describe 'Companies' do
+    it '会社グループが2社作成される' do
+      expect(Company.count).to eq(2)
+    end
+
+    it 'すべての会社が名前を持つ' do
+      expect(Company.all.all? { |c| c.name.present? }).to be true
+    end
+
+    it 'すべての会社が所有者を持つ' do
+      expect(Company.all.all? { |c| c.owner_id.present? }).to be true
+    end
+  end
+
+  describe 'Departments' do
+    it '部署が4種類作成される' do
+      expect(Department.count).to eq(4)
+    end
+
+    it 'すべての部署が会社に属する' do
+      expect(Department.all.all? { |d| d.company_id.present? }).to be true
+    end
+
+    it 'すべての部署が名前を持つ' do
+      expect(Department.all.all? { |d| d.name.present? }).to be true
+    end
+
+    it '各会社が少なくとも1つ以上の部署を持つ' do
+      Company.all.each do |company|
+        expect(company.departments.count).to be >= 1
+      end
+    end
+  end
+
+  describe 'QuestionTemplates' do
+    it 'テンプレートが8件作成される' do
+      expect(QuestionTemplate.count).to eq(8)
+    end
+
+    it 'すべてのテンプレートが会社に属する' do
+      expect(QuestionTemplate.all.all? { |t| t.company_id.present? }).to be true
+    end
+
+    it 'すべてのテンプレートが名前を持つ' do
+      expect(QuestionTemplate.all.all? { |t| t.name.present? }).to be true
+    end
+
+    it 'すべてのテンプレートが template_type を持つ' do
+      expect(QuestionTemplate.all.all? { |t| t.template_type.present? }).to be true
+    end
+
+    it 'すべてのテンプレートが questions_data を持つ' do
+      expect(QuestionTemplate.all.all? { |t| t.questions_data.present? }).to be true
     end
   end
 
@@ -78,7 +136,7 @@ RSpec.describe 'Seed data' do
     it 'すべての質問が published status である' do
       expect(Question.all.all? { |q| q.published? }).to be true
     end
-  end
+end
 
   describe 'Choices' do
     it '選択肢型質問に複数の選択肢が作成される' do
