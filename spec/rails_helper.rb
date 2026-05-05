@@ -43,9 +43,10 @@ RSpec.configure do |config|
     Rails.root.join('spec/fixtures')
   ]
 
-  # If you're not using ActiveRecord, or you'd prefer not to run each of your
-  # examples within a transaction, remove the following line or assign false
-  # instead of true.
+  # active_support time helpers
+  config.include ActiveSupport::Testing::TimeHelpers
+
+  # rspec-rails 6.x / rails 7.0+
   config.use_transactional_fixtures = true
 
   # You can uncomment this line to turn off ActiveRecord support entirely.
