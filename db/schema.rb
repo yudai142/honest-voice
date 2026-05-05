@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_04_000015) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_04_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -180,11 +180,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_04_000015) do
     t.string "name", null: false
     t.datetime "next_scheduled_at"
     t.bigint "question_id"
+    t.bigint "question_template_id"
     t.integer "status", default: 0
+    t.string "target_scope", default: "all", null: false
     t.datetime "updated_at", null: false
     t.index ["company_id", "frequency"], name: "index_recurring_schedules_on_company_id_and_frequency"
     t.index ["company_id"], name: "index_recurring_schedules_on_company_id"
     t.index ["question_id"], name: "index_recurring_schedules_on_question_id"
+    t.index ["question_template_id"], name: "index_recurring_schedules_on_question_template_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -224,5 +227,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_04_000015) do
   add_foreign_key "questions", "companies"
   add_foreign_key "questions", "departments"
   add_foreign_key "recurring_schedules", "companies"
+  add_foreign_key "recurring_schedules", "question_templates"
   add_foreign_key "recurring_schedules", "questions"
 end
