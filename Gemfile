@@ -9,8 +9,6 @@ gem "sqlite3", ">= 1.4"  # 開発・テスト用
 gem "pg", "~> 1.5"      # 本番用 PostgreSQL
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
-# Use Tailwind CSS [https://github.com/rails/tailwindcss-rails]
-gem "tailwindcss-rails", "~> 4.4.0"
 # Building JSON APIs with Rails [https://github.com/rails/jbuilder]
 gem "jbuilder"
 gem "rack-cors"
